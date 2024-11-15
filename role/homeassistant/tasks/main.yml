@@ -1,0 +1,13 @@
+- name: Copy Home Assistant docker compose file
+  ansible.builtin.copy:
+    src: files/home-assistant.yml
+    dest: /home/root/homeassistant/
+    mode: rw
+  loop:
+    - home-assistant.yml
+
+- name: Deploy Home Assistant with docker compose
+  community.docker.docker_compose_v2:
+    project_src: /home/root/homeassistant/
+    files:
+      - home-assistant.yml
