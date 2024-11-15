@@ -1,0 +1,6 @@
+ansible==10.6.0
+
+# Development dependencies
+# could be moved to a requirements-dev.txt
+ansible-lint==24.10.0
+ansible-cmdb==1.31
