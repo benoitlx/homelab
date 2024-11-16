@@ -1,0 +1,11 @@
+- name: Servers
+  hosts: all
+  become: true
+  roles:
+    - common
+    - docker
+    - role: artis3n.tailscale
+      vars:
+        verbose: true
+        tailscale_authkey: "{{ lookup('community.general.bitwarden', 'tailscale_auth_key', field='notes')[0] }}"
+    - homeassistant
