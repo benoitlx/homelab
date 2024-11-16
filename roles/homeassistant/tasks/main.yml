@@ -2,12 +2,13 @@
   ansible.builtin.file:
     path: /home/ansible/homeassistant/config
     state: directory
+    mode: '664'
 
 - name: Copy Home Assistant docker compose file
   ansible.builtin.copy:
     src: files/home-assistant.yml
     dest: /home/ansible/homeassistant/
-    mode: '664' 
+    mode: '664'
   loop:
     - home-assistant.yml
 
