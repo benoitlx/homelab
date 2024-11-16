@@ -3,3 +3,4 @@
 
 exclude_paths:
   - .github
+  - roles/artis3n.tailscale
