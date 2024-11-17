@@ -1,11 +1,24 @@
 - name: Servers
   hosts: all
   become: true
+
+  pre_tasks:
+    - name: Check if Tailscale is installed
+      ansible.builtin.shell: |
+        tailscale version
+      register: tailscale_check
+      ignore_errors: true
+      changed_when: false
+
+    - name: Set fact for Tailscale presence
+      ansible.builtin.set_fact:
+        tailscale_installed: "{{ tailscale_check.rc == 0 }}"
+
   roles:
     - common
     - docker
     - role: artis3n.tailscale
       vars:
-        verbose: true
         tailscale_authkey: "{{ lookup('community.general.bitwarden', 'tailscale_auth_key', field='notes')[0] }}"
+      when: not tailscale_installed
     - homeassistant
