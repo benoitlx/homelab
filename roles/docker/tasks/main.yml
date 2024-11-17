@@ -1,18 +1,7 @@
-- name: Add Docker GPG apt Key
-  ansible.builtin.apt_key:
-    url: https://download.docker.com/linux/debian/gpg
-    state: present
+- name: Setup redhat
+  ansible.builtin.include_tasks: docker-fedora.yml
+  when: ansible_os_family == 'RedHat'
 
-- name: Add Docker Repository
-  ansible.builtin.apt_repository:
-    repo: deb https://download.docker.com/linux/debian bookworm stable
-    state: present
-
-- name: Update apt and install docker
-  ansible.builtin.apt:
-    name:
-      - docker-ce
-      - docker-ce-cli
-      - docker-compose-plugin
-    state: present
-    update_cache: true
+- name: Setup debian
+  ansible.builtin.include_tasks: docker-debian.yml
+  when: ansible_os_family == 'Debian'
