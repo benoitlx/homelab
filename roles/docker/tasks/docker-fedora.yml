@@ -13,7 +13,7 @@
     enabled: true
 
 - name: Update dnf and install Docker
-  ansible.builtin.dnf:
+  ansible.builtin.dnf5:
     name:
       - docker-ce
       - docker-ce-cli
