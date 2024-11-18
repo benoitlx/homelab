@@ -1,12 +1,11 @@
 ---
-- name: Install essentials
-  ansible.builtin.apt:
-    update_cache: true
-    name:
-      - vim
-      - htop
-      - iftop
-    state: present
+- name: Essentials fedora
+  ansible.builtin.include_tasks: essentials-fedora.yml
+  when: ansible_os_family == 'RedHat'
+
+- name: Essentials debian
+  ansible.builtin.include_tasks: essentials-debian.yml
+  when: ansible_os_family == 'Debian'
 
 - name: Color ls
   ansible.builtin.blockinfile:
@@ -36,6 +35,6 @@
 - name: Copy MOTD banner
   ansible.builtin.template:
     src: 00-banner.j2
-    dest: /etc/update-motd.d/00-banner
+    dest: /etc/motd
     mode: "755"
   when: not motd.failed

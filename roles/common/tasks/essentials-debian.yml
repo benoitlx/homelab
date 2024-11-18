@@ -1,0 +1,8 @@
+- name: Install essentials Debian
+  ansible.builtin.apt:
+    update_cache: true
+    name:
+      - vim
+      - htop
+      - iftop
+    state: present

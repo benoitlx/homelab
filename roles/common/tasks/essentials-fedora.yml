@@ -1,0 +1,13 @@
+- name: Install python3-libdnf5
+  ansible.builtin.shell: |
+      dnf install -y python3-libdnf5
+  changed_when: false
+
+- name: Install essentials fedora
+  ansible.builtin.dnf5:
+    update_cache: true
+    name:
+      - vim
+      - htop
+      - iftop
+    state: present
