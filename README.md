@@ -4,13 +4,13 @@ Personnal repository for easy deployment of services running on my homelab.
 
 - A raspberry pi 5 (with latest 64 bit raspbian) running :
     - [Home Assistant](https://www.home-assistant.io/)
-    - The [Arr](https://wiki.servarr.com/) suite
 - A raspberry pi 4 (with 32bit of raspbian buster) running :
     - [remote-gpio](https://gpiozero.readthedocs.io/en/stable/remote_gpio.html)
     - [Custom](https://github.com/saidijongo/ReSpeaker_Seeed_VoiceCard) kernel headers for Respeaker 4 mic array
 - A Fedora 41 server running :
     - [Jellyfin](https://jellyfin.org/)
     - [Jellyseer](https://github.com/Fallenbagel/jellyseerr)
+    - The [Arr](https://wiki.servarr.com/) suite
     - [QbitTorrent](https://github.com/qbittorrent/qBittorrent/)
     - [faster-whisper](https://github.com/SYSTRAN/faster-whisper)
     - [llama3](https://ollama.com/library/llama3) with ollama
@@ -31,6 +31,20 @@ On the managed servers:
 
 ### Usage
 
-Create a [`hosts`](https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html) file and adapt the `deploy-server.yml` playbook to choose on which devices to deploy the services.
+Create a [`hosts`](https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html) file with the target hostnames.
+
+Create a directory `host_vars` for host specific variables. 
+For each host create the following file in this directory :
+
+```yaml
+compose:
+    - homeassistant
+    - prowlarr
+    - radarr
+    - sonarr
+```
+
+> [!WARNING]
+> Even if you don't want to deploy services on a device you should create this file with `compose:`
 
 Then run `just playbook-deploy-infra`.
