@@ -1,0 +1,13 @@
+---
+services:
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /home/ansible/prowlarr/config:/config
+    restart: unless-stopped
+    network_mode: host
