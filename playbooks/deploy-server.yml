@@ -21,4 +21,4 @@
       vars:
         tailscale_authkey: "{{ lookup('community.general.bitwarden', 'tailscale_auth_key', field='notes')[0] }}"
       when: not tailscale_installed
-    - homeassistant
+    - compose_up

@@ -1,0 +1,20 @@
+- name: Create Config Directories
+  ansible.builtin.file:
+    path: /home/ansible/{{ item }}/config/
+    state: directory
+    mode: '664'
+  loop: "{{ compose | default([], true) }}"
+
+- name: Copy docker compose files
+  ansible.builtin.copy:
+    src: files/{{ item }}.yml
+    dest: /home/ansible/{{ item }}/
+    mode: '664'
+  loop: "{{ compose | default([], true) }}"
+
+- name: Deploy dockers
+  community.docker.docker_compose_v2:
+    project_src: /home/ansible/{{ item }}/
+    files:
+      - "{{ item }}.yml"
+  loop: "{{ compose | default([], true) }}"
