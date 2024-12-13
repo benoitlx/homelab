@@ -6,7 +6,7 @@ services:
     environment:
       - LOG_LEVEL=debug
       - TZ=Asia/Tashkent
-      - PORT=5055 #optional
+      - PORT=5055 # optional
     ports:
       - 5055:5055
     volumes:

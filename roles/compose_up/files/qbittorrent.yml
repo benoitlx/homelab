@@ -11,7 +11,7 @@ services:
       - TORRENTING_PORT=6881
     volumes:
       - /home/ansible/qbittorrent/config:/config
-      - /home/bleroux/downloads:/downloads #optional
+      - /home/bleroux/downloads:/downloads # optional
     ports:
       - 8080:8080
       - 6881:6881
