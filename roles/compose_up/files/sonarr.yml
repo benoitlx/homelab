@@ -9,9 +9,8 @@ services:
       - TZ=Etc/UTC
     volumes:
       - /home/ansible/sonarr/config:/config
-      # - /path/to/tvseries:/tv #optional
-      # - /path/to/downloadclient-downloads:/downloads #optional
-    # ports:
-    #   - 8989:8989
+      - /home/bleroux/Videos/shows:/tv
+      - /home/bleroux/downloads:/downloads
+    ports:
+      - 8989:8989
     restart: unless-stopped
-    network_mode: host

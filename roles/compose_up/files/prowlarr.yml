@@ -9,5 +9,6 @@ services:
       - TZ=Etc/UTC
     volumes:
       - /home/ansible/prowlarr/config:/config
+    ports:
+      - 9696:9696
     restart: unless-stopped
-    network_mode: host

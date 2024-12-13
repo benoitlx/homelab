@@ -9,7 +9,8 @@ services:
       - TZ=Etc/UTC
     volumes:
       - /home/ansible/radarr/config:/config
-      # - /path/to/movies:/movies #optional
-      # - /path/to/download-client-downloads:/downloads #optional
+      - /home/bleroux/Videos/movies:/movies
+      - /home/bleroux/downloads:/downloads
+    ports:
+      - 7878:7878
     restart: unless-stopped
-    network_mode: host
