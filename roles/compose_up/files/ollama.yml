@@ -1,0 +1,38 @@
+services:
+  ollama:
+    volumes:
+      - /home/ansible/ollama/config/ollama/ollama:/root/.ollama
+    container_name: ollama
+    pull_policy: always
+    tty: true
+    restart: unless-stopped
+    image: ollama/ollama:latest
+    ports:
+      - 7869:11434
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  ollama-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: ollama-webui
+    volumes:
+      - /home/ansible/ollama/config/ollama/ollama-webui:/app/backend/data
+    depends_on:
+      - ollama
+    ports:
+      - 48080:8080
+    environment: # https://docs.openwebui.com/getting-started/env-configuration#default_models
+      - OLLAMA_BASE_URLS=http://fedora-fixe.taild069bb.ts.net:7869 # comma separated ollama hosts
+      - ENV=dev
+      - WEBUI_AUTH=False
+      - WEBUI_NAME=benoitlx's AI
+      - WEBUI_URL=http://localhost:48080
+      - WEBUI_SECRET_KEY=t0p-s3cr3t
+    restart: unless-stopped
