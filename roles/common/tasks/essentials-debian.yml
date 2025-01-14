@@ -5,4 +5,5 @@
       - vim
       - htop
       - iftop
+      - kitty-terminfo
     state: present
