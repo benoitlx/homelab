@@ -3,6 +3,11 @@
     state: present
     key: https://download.docker.com/linux/fedora/gpg
 
+- name: Add nvidia container toolkit GPG Key
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://nvidia.github.io/libnvidia-container/gpgkey
+
 - name: Add Docker Repository
   ansible.builtin.yum_repository:
     name: docker
@@ -12,11 +17,38 @@
     gpgkey: https://download.docker.com/linux/fedora/gpg
     enabled: true
 
+- name: Add nvidia container toolkit Repository
+  ansible.builtin.yum_repository:
+    name: nvidia_container_toolkit
+    description: Nvidia Container Toolkit Repository
+    baseurl: https://nvidia.github.io/libnvidia-container/experimental/rpm/$basearch
+    gpgcheck: true
+    gpgkey: https://nvidia.github.io/libnvidia-container/gpgkey
+    enabled: true
+
 - name: Update dnf and install Docker
   ansible.builtin.dnf5:
     name:
       - docker-ce
       - docker-ce-cli
       - docker-compose-plugin
+      - nvidia-container-toolkit
     state: present
     update_cache: true
+
+- name: Check for Docker runtime config file
+  ansible.builtin.stat:
+    path: /etc/docker/daemon.json
+  register: docker_daemon_result
+
+- name: Configure Docker to use NVIDIA runtime
+  ansible.builtin.command: 'nvidia-ctk runtime configure --runtime=docker'
+  changed_when: true
+  when: not docker_daemon_result.stat.exists
+
+- name: Reload systemd daemons and restart Docker service
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: true
+    name: docker
+  when: not docker_daemon_result.stat.exists
