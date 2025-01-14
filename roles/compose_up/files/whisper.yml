@@ -14,3 +14,11 @@ services:
     ports:
       - 10300:10300
     restart: unless-stopped
+    runtime: nvidia
+    deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                count: 1
+                capabilities: [gpu]
