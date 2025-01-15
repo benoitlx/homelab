@@ -1,13 +1,12 @@
 services:
   faster-whisper:
-    image: lscr.io/linuxserver/faster-whisper:latest
+    image: lscr.io/linuxserver/faster-whisper:gpu
     container_name: faster-whisper
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-      - WHISPER_MODEL=large-v3
-      - WHISPER_BEAM=1 # optional
+      - WHISPER_MODEL=medium
       - WHISPER_LANG=en # optional
     volumes:
       - /home/ansible/whisper/config:/config
