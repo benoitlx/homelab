@@ -1,0 +1,28 @@
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:latest"
+    volumes:
+      - /home/ansible/homeassistant/config:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: service:ts-homeassistant
+    depends_on:
+      - ts-homeassistant 
+  
+  ts-homeassistant:
+    image: tailscale/tailscale:latest
+    hostname: ha-e019
+    environment:
+      - TS_AUTHKEY={{ tailscale_authkey }}
+      - TS_STATE_DIR=/var/lib/tailscale
+    volumes:
+      - /home/ansible/homeassistant/ts:/var/lib/tailscale
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
