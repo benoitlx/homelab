@@ -48,3 +48,15 @@ compose:
 > Even if you don't want to deploy services on a device you should create this file with `compose:`
 
 Then run `just playbook-deploy-infra`.
+
+## TODO
+
+- [ ] deploy tailscale configuration on hosts (for funnel and serve) (! Home Assistant needs to be run before the serve command is run on 8123 !)
+- [ ] solve the issue I opened on ansible-role-tailscale (https://github.com/artis3n/ansible-role-tailscale/issues/517)
+
+## Specific Host Documentation
+
+### SAT
+
+- Additional kernel drivers : https://github.com/Wartem/seeed-voicecard
+- J'ai réactivé snc_bcmxxxx dans /etc/modprobe.d/
