@@ -1,3 +1,5 @@
 compose:
   - file: homeassistant
     name: home-server
+    port: 8123
+    funnel: true
