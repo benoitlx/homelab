@@ -14,7 +14,7 @@ services:
   
   ts-homeassistant:
     image: tailscale/tailscale:latest
-    hostname: ha-rez
+    hostname: "{{ item.name }}-{{ inventory_hostname_short }}"
     environment:
       - TS_AUTHKEY={{ tailscale_authkey }}
       - TS_STATE_DIR=/var/lib/tailscale

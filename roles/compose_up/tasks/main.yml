@@ -1,6 +1,6 @@
 - name: Create Compose Directories
   ansible.builtin.file:
-    path: /home/ansible/{{ item }}/
+    path: /home/ansible/{{ item.file }}/
     state: directory
     owner: root
     group: root
@@ -9,7 +9,7 @@
 
 - name: Create Config Directories
   ansible.builtin.file:
-    path: /home/ansible/{{ item }}/config/
+    path: /home/ansible/{{ item.file }}/config/
     state: directory
     owner: root
     group: root
@@ -18,7 +18,7 @@
 
 - name: Create Tailscale State Directories
   ansible.builtin.file:
-    path: /home/ansible/{{ item }}/ts/state/
+    path: /home/ansible/{{ item.file }}/ts/state/
     state: directory
     owner: root
     group: root
@@ -27,7 +27,7 @@
 
 - name: Create Tailscale Config Directories
   ansible.builtin.file:
-    path: /home/ansible/{{ item }}/ts/config/
+    path: /home/ansible/{{ item.file }}/ts/config/
     state: directory
     owner: root
     group: root
@@ -36,8 +36,8 @@
 
 - name: Copy docker compose files
   ansible.builtin.template:
-    src: templates/{{ item }}/{{ item }}.yml.j2
-    dest: /home/ansible/{{ item }}/docker-compose.yml
+    src: templates/{{ item.file }}/{{ item.file }}.yml.j2
+    dest: /home/ansible/{{ item.file }}/docker-compose.yml
     owner: root
     group: root
     mode: '664'
@@ -47,8 +47,8 @@
 
 - name: Copy tailscale config files
   ansible.builtin.template:
-    src: templates/{{ item }}/ts.json.j2
-    dest: /home/ansible/{{ item }}/ts/config/ts.json
+    src: templates/{{ item.file }}/ts.json.j2
+    dest: /home/ansible/{{ item.file }}/ts/config/ts.json
     owner: root
     group: root
     mode: '664'
@@ -56,7 +56,7 @@
 
 - name: Deploy dockers
   community.docker.docker_compose_v2:
-    project_src: /home/ansible/{{ item }}/
+    project_src: /home/ansible/{{ item.file }}/
     files:
       - "docker-compose.yml"
   loop: "{{ compose | default([], true) }}"

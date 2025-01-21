@@ -1,0 +1,3 @@
+compose:
+  - file: homeassistant
+    name: home-server
