@@ -16,9 +16,18 @@
     mode: '775'
   loop: "{{ compose | default([], true) }}"
 
-- name: Create Tailscale Directories
+- name: Create Tailscale State Directories
   ansible.builtin.file:
-    path: /home/ansible/{{ item }}/ts/
+    path: /home/ansible/{{ item }}/ts/state/
+    state: directory
+    owner: root
+    group: root
+    mode: '775'
+  loop: "{{ compose | default([], true) }}"
+
+- name: Create Tailscale Config Directories
+  ansible.builtin.file:
+    path: /home/ansible/{{ item }}/ts/config/
     state: directory
     owner: root
     group: root
@@ -27,7 +36,7 @@
 
 - name: Copy docker compose files
   ansible.builtin.template:
-    src: templates/{{ item }}.yml.j2
+    src: templates/{{ item }}/{{ item }}.yml.j2
     dest: /home/ansible/{{ item }}/docker-compose.yml
     owner: root
     group: root
@@ -35,6 +44,15 @@
   loop: "{{ compose | default([], true) }}"
   vars:
     tailscale_authkey: "{{ lookup('community.general.bitwarden', 'tailscale_auth_key', field='notes')[0] }}"
+
+- name: Copy tailscale config files
+  ansible.builtin.template:
+    src: templates/{{ item }}/ts.json.j2
+    dest: /home/ansible/{{ item }}/ts/config/ts.json
+    owner: root
+    group: root
+    mode: '664'
+  loop: "{{ compose | default([], true) }}"
 
 - name: Deploy dockers
   community.docker.docker_compose_v2:
