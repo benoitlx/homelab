@@ -1,19 +1,21 @@
 {
-    "TCP": {
-      "443": {
-        "HTTPS": true
-      }
-    },
-    "Web": {
-      "${TS_CERT_DOMAIN}:443": {
-        "Handlers": {
-          "/": {
-            "Proxy": "http://127.0.0.1:{{ item.port }}"
-          }
+  "TCP": {
+    "443": {
+      "HTTPS": true
+    }
+  },
+  "Web": {
+    "${TS_CERT_DOMAIN}:443": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://127.0.0.1:{{ item.port }}"
         }
       }
-    },
-    "AllowFunnel": {
-      "${TS_CERT_DOMAIN}:443": {{ item.funnel | lower }}
     }
   }
+  {% if item.funnel %},
+  "AllowFunnel": {
+    "${TS_CERT_DOMAIN}:443": true 
+  }
+  {% endif %}
+}
