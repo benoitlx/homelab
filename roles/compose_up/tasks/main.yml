@@ -42,6 +42,15 @@
     group: root
     mode: '664'
   loop: "{{ compose | default([], true) }}"
+
+- name: Copy Tailscale Sidecar Compose Files
+  ansible.builtin.template:
+    src: templates/ts-service/ts-service.yml.j2
+    dest: /home/ansible/{{ item.file }}/ts-service.yml
+    owner: root
+    group: root
+    mode: '664'
+  loop: "{{ compose | default([], true) }}"
   vars:
     tailscale_authkey: "{{ lookup('community.general.bitwarden', 'tailscale_auth_key', field='notes')[0] }}"
 
