@@ -1,7 +1,7 @@
 services:
   ts-sidecar:
     image: tailscale/tailscale:latest
-    hostname: "{{ item.name }}-{{ inventory_hostname_short }}"
+    hostname: "{{ item.name }}"
     # à voir: enlever le hostname
     environment:
       - TS_AUTHKEY={{ tailscale_authkey }}
