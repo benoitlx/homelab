@@ -56,7 +56,7 @@
 
 - name: Copy tailscale config files
   ansible.builtin.template:
-    src: templates/ts-service/ts.json.j2
+    src: templates/{{ item.file if "custom" in item and item.custom else "ts-service" }}/ts.json.j2
     dest: /home/ansible/{{ item.file }}/ts/config/ts.json
     owner: root
     group: root

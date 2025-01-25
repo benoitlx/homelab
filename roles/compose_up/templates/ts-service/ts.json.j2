@@ -1,21 +1,58 @@
 {
   "TCP": {
-    "443": {
+    {% for port in item.get("serve", []) %}
+    "{{ port }}": {
       "HTTPS": true
     }
+    {{ ", " if not loop.last else "" }}
+    {% endfor %}
+    {{ "," if "funnel" in item and "serve" in item }}
+    {% for port in item.get("funnel", []) %}
+    "{{ [443, 8443][loop.index0] }}": {
+      "HTTPS": true
+    },
+    "{{ port }}": {
+      "HTTPS": true
+    }
+    {{ ", " if not loop.last else "" }}
+    {% endfor %}
   },
   "Web": {
-    "${TS_CERT_DOMAIN}:443": {
+    {% for port in item.get("serve", []) %}
+    "${TS_CERT_DOMAIN}:{{ port }}": {
       "Handlers": {
         "/": {
-          "Proxy": "http://127.0.0.1:{{ item.port }}"
+          "Proxy": "http://127.0.0.1:{{ port }}"
         }
       }
     }
+    {{ ", " if not loop.last else "" }}
+    {% endfor %}
+    {{ "," if "funnel" in item and "serve" in item }}
+    {% for port in item.get("funnel", []) %}
+    "${TS_CERT_DOMAIN}:{{ [443, 8443][loop.index0] }}": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://127.0.0.1:{{ port }}"
+        }
+      }
+    },
+    "${TS_CERT_DOMAIN}:{{ port }}": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://127.0.0.1:{{ port }}"
+        }
+      }
+    }
+    {{ ", " if not loop.last else "" }}
+    {% endfor %}
   }
-  {% if item.funnel %},
+  {% if "funnel" in item %},
   "AllowFunnel": {
-    "${TS_CERT_DOMAIN}:443": true 
+    {% for _ in item.funnel %}
+    "${TS_CERT_DOMAIN}:{{ [443, 8443][loop.index0] }}": true 
+    {{ ", " if not loop.last else "" }}
+    {% endfor %}
   }
   {% endif %}
 }
