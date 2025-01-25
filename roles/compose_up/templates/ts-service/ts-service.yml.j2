@@ -1,0 +1,18 @@
+services:
+  ts-sidecar:
+    image: tailscale/tailscale:latest
+    hostname: "{{ item.name }}"
+    # à voir: enlever le hostname
+    environment:
+      - TS_AUTHKEY={{ tailscale_authkey }}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_SERVE_CONFIG=/config/ts.json
+    volumes:
+      - /home/ansible/{{ item.file }}/ts/state:/var/lib/tailscale
+      - /home/ansible/{{ item.file }}/ts/config:/config
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped

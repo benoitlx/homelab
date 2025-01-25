@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=schema.json
+
+compose:
+  - file: homeassistant
+    name: home-server
+    funnel:
+      - 8123
+  - file: whisper
+    name: stt
+    serve:
+      - 10300
+  - file: ollama
+    name: llm
+    funnel:
+      - 48080 # funnel ollama-webui
+    serve:
+      - 7869 # serve ollama
+  - file: test
+    funnel:
+      - 80 # 443
+      - 81 # 8443
+    serve:
+      - 82 # 82
+    name: test
+  - file: test1
+    name: aaaa
+    custom: true
+
+# funnel only support 2 ports the first one will be mapped to 443 and the second one to 8443
+# serve support an infinite number of ports

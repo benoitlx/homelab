@@ -1,0 +1,16 @@
+include:
+  - ts-service.yml
+
+services:
+  jellyseerr:
+    container_name: jellyseerr
+    image: fallenbagel/jellyseerr:latest
+    pull_policy: always
+    volumes:
+      - /home/ansible/{{ item.file }}/config:/app/config
+    environment:
+      - TZ=Europe/Paris
+    restart: unless-stopped
+    network_mode: service:ts-sidecar
+    depends_on:
+      - ts-sidecar

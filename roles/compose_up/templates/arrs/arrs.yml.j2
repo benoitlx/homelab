@@ -1,0 +1,70 @@
+include:
+  - ts-service.yml
+
+services:
+  prowlarr:
+    container_name: prowlarr
+    image: lscr.io/linuxserver/prowlarr:latest
+    pull_policy: always
+    volumes:
+      - /home/ansible/{{ item.file }}/config/prowlarr:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+    restart: unless-stopped
+    network_mode: service:ts-sidecar
+    depends_on:
+      - ts-sidecar
+
+  radarr:
+    container_name: radarr
+    image: lscr.io/linuxserver/radarr:latest
+    pull_policy: always
+    volumes:
+      - /home/ansible/{{ item.file }}/config/radarr:/config
+      - /home/bleroux/Videos/movies:/movies
+      - /home/bleroux/downloads:/downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+    restart: unless-stopped
+    network_mode: service:ts-sidecar
+    depends_on:
+      - ts-sidecar
+
+  sonarr:
+    container_name: sonarr
+    image: lscr.io/linuxserver/sonarr:latest
+    pull_policy: always
+    volumes:
+      - /home/ansible/{{ item.file }}/config/sonarr:/config
+      - /home/bleroux/Videos/shows:/tv
+      - /home/bleroux/downloads:/downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+    restart: unless-stopped
+    network_mode: service:ts-sidecar
+    depends_on:
+      - ts-sidecar
+
+  qbittorrent:
+    container_name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:latest
+    pull_policy: always
+    volumes:
+      - /home/ansible/{{ item.file }}/config/qbittorrent:/config
+      - /home/bleroux/downloads:/downloads # optional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
+    restart: unless-stopped
+    network_mode: service:ts-sidecar
+    depends_on:
+      - ts-sidecar

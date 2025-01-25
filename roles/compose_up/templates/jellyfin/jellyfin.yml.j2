@@ -1,0 +1,20 @@
+include:
+  - ts-service.yml
+
+services:
+  jellyfin:
+    container_name: jellyfin
+    image: lscr.io/linuxserver/jellyfin:latest
+    pull_policy: always
+    volumes:
+      - /home/ansible/{{ item.file }}/config:/config
+      - /home/bleroux/Videos/shows:/data/tvshows
+      - /home/bleroux/Videos/movies:/data/movies
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+    restart: unless-stopped
+    network_mode: service:ts-sidecar
+    depends_on:
+      - ts-sidecar

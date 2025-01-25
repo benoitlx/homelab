@@ -1,0 +1,75 @@
+{
+    "description": "Schema for validating host_var",
+    "type": "object",
+    "properties": {
+        "compose": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "file": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the tailscale machine that will be deployed."
+                    },
+                    "custom": {
+                        "type": "boolean",
+                        "description": "Wheter to use the generic ts serve template or use a custom one in the same directory as the compose template."
+                    },
+                    "serve": {
+                        "type": "array",
+                        "description": "The ports on which funnel should listen. The first one is mapped to 443 and the second one to 8443.",
+                        "items": {
+                            "type": "integer",
+                            "minimum": 80,
+                            "maximum": 65535
+                        },
+                        "minItems": 1,
+                        "uniqueItems": true
+                    },
+                    "funnel": {
+                        "type": "array",
+                        "description": "The ports on which to listen services.",
+                        "items": {
+                            "type": "integer",
+                            "minimum": 80,
+                            "maximum": 65535
+                        },
+                        "maxItems": 2,
+                        "minItems": 1,
+                        "uniqueItems": true
+                    }
+                },
+                "additionalProperties": false,
+                "anyOf": [
+                    {
+                        "required": [
+                            "file",
+                            "name",
+                            "serve"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "file",
+                            "name",
+                            "funnel"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "file",
+                            "name",
+                            "custom"
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    "required": [
+        "compose"
+    ]
+}

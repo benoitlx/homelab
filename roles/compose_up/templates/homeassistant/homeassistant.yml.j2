@@ -1,0 +1,18 @@
+include:
+  - ts-service.yml
+
+services:
+  homeassistant:
+    container_name: homeassistant 
+    image: ghcr.io/home-assistant/home-assistant:latest
+    pull_policy: always
+    volumes:
+      - /home/ansible/{{ item.file }}/config:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: service:ts-sidecar
+    depends_on:
+      - ts-sidecar
+  
