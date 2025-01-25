@@ -3,10 +3,11 @@ include:
 
 services:
   homeassistant:
-    container_name: homeassistant
-    image: "ghcr.io/home-assistant/home-assistant:latest"
+    container_name: homeassistant 
+    image: ghcr.io/home-assistant/home-assistant:latest
+    pull_policy: always
     volumes:
-      - /home/ansible/homeassistant/config:/config
+      - /home/ansible/{{ item.file }}/config:/config
       - /etc/localtime:/etc/localtime:ro
       - /run/dbus:/run/dbus:ro
     restart: unless-stopped

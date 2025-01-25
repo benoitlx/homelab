@@ -1,0 +1,86 @@
+include:
+  - ts-service.yml
+
+services:
+  ollama:
+    container_name: ollama
+    image: ollama/ollama:latest
+    pull_policy: always
+    volumes:
+      - /home/ansible/{{ item.file }}/config/ollama/ollama:/root/.ollama
+    tty: true
+    restart: unless-stopped
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    network_mode: service:ts-sidecar
+    depends_on:
+      - ts-sidecar
+
+  ollama-webui:
+    container_name: ollama-webui
+    image: ghcr.io/open-webui/open-webui:main
+    pull_policy: always
+    volumes:
+      - /home/ansible/{{ item.file }}/config/ollama/ollama-webui:/app/backend/data
+    environment: # https://docs.openwebui.com/getting-started/env-configuration#default_models
+      - ENV=dev
+      - WEBUI_NAME=benoitlx's AI
+      - WEBUI_URL=http://localhost:8080
+      - OLLAMA_BASE_URLS=https://ai.taild069bb.ts.net:11434
+      - DEFAULT_MODELS=llama3.2
+    restart: unless-stopped
+    network_mode: service:ts-sidecar
+    depends_on:
+      - ollama
+      - ts-sidecar
+
+  faster-whisper:
+    image: lscr.io/linuxserver/faster-whisper:gpu
+    container_name: faster-whisper
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - WHISPER_MODEL=medium
+      - WHISPER_LANG=en # optional
+    volumes:
+      - /home/ansible/{{ item.file }}/config/whisper:/config
+    restart: unless-stopped
+    runtime: nvidia
+    deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                count: 1
+                capabilities: [gpu]
+    network_mode: service:ts-sidecar
+    depends_on:
+      - ts-sidecar
+
+  piper:
+    image: lscr.io/linuxserver/piper:latest
+    container_name: piper
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - PIPER_VOICE=en_US-lessac-medium
+      # - PIPER_LENGTH=1.0 #optional
+      # - PIPER_NOISE=0.667 #optional
+      # - PIPER_NOISEW=0.333 #optional
+      # - PIPER_SPEAKER=0 #optional
+      # - PIPER_PROCS=1 #optional
+    volumes:
+      - /home/ansible/{{ item.file }}/config/piper:/config
+    restart: unless-stopped
+    network_mode: service:ts-sidecar
+    depends_on:
+      - ts-sidecar
