@@ -14,7 +14,7 @@ This playbook specifically target [raspberry pi][rpi] and machines on [fedora][f
     - [QbitTorrent][qbittorrent]
     - [faster-whisper][faster-whisper]
     - [piper][piper]
-    - [ollama][ollama] and with a [Web UI][open-webui]
+    - [ollama][ollama] with a [Web UI][open-webui]
 - A raspberry pi 5 running :
     - [Home Assistant][homeassistant]
     - [Wizarr][wizarr]
