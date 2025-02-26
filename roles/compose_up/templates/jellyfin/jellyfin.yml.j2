@@ -1,20 +1,27 @@
-include:
-  - ts-service.yml
-
+# include:
+#   - ts-service.yml
+# 
 services:
   jellyfin:
     container_name: jellyfin
-    image: lscr.io/linuxserver/jellyfin:latest
+    image: jellyfin/jellyfin 
     pull_policy: always
     volumes:
-      - /home/ansible/{{ item.file }}/config:/config
-      - /home/bleroux/Videos/shows:/data/tvshows
-      - /home/bleroux/Videos/movies:/data/movies
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Paris
+      - /home/ansible/jellyfin/config:/config
+      - /home/bleroux/Videos/shows:/data/tvshows:rw
+      - /home/bleroux/Videos/movies:/data/movies:rw
+      - /home/bleroux/Music:/data/music:rw
     restart: unless-stopped
-    network_mode: service:ts-sidecar
-    depends_on:
-      - ts-sidecar
+    ports:
+      - 8096:8096
+    # network_mode: service:ts-sidecar
+    # depends_on:
+    #   - ts-sidecar
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
