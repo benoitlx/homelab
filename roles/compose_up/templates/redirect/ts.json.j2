@@ -1,0 +1,19 @@
+{
+  "TCP": {
+    "443": {
+      "HTTPS": true
+    }
+  },
+  "Web": {
+    "${TS_CERT_DOMAIN}:443": {
+      "Handlers": {
+        "/ha": {
+            "Proxy": "https://ha-rez.taild069bb.ts.net:8123"
+        },
+        "/camghetto/invite": {
+            "Proxy": "https://invite-camghetto.taild069bb.ts.net:443"
+        }
+      }
+    }
+  }
+}
