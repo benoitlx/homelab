@@ -30,7 +30,7 @@ services:
     image: voicevox/voicevox_engine:nvidia-latest 
     container_name: voicevox 
     volumes:
-      - /home/ansible/{{ item.file }}/config/whisper:/config
+      - /home/ansible/{{ item.file }}/config/voicevox:/config
     restart: unless-stopped
     runtime: nvidia
     deploy:

@@ -1,0 +1,47 @@
+{
+  "TCP": {
+        "11434": {
+      "HTTPS": true
+    }
+    , 
+        "8080": {
+      "HTTPS": true
+    }
+        
+      },
+  "Web": {
+        "${TS_CERT_DOMAIN}:11434": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://127.0.0.1:11434"
+        }
+      }
+    }
+    , 
+        "${TS_CERT_DOMAIN}:8080": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://127.0.0.1:8080"
+        }
+      }
+    }
+    , 
+        "${TS_CERT_DOMAIN}:10300": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://127.0.0.1:10300"
+        }
+      }
+    }
+    , 
+        "${TS_CERT_DOMAIN}:10200": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://127.0.0.1:10200"
+        }
+      }
+    }
+    
+        
+      }
+  }
