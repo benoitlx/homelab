@@ -9,7 +9,9 @@ services:
     volumes:
       - /home/ansible/jellyfin/config:/config
       - /home/bleroux/Videos/shows:/data/tvshows:rw
+      - /mnt/disk3/shows:/data/tvshows2:rw
       - /home/bleroux/Videos/movies:/data/movies:rw
+      - /mnt/disk3/film:/data/movies2:rw
       - /home/bleroux/Music:/data/music:rw
     restart: unless-stopped
     ports:
