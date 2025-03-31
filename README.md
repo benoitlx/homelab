@@ -32,6 +32,7 @@ On the computer running the playbooks :
 
 On the managed servers:
 - An `ansible` user account with passwordless sudo (`just playbook-create-ansible-user`) use `--ask-become-pass` while running this role for the first time on a fresh fedora 41 install.
+- For backups, necessary [`borg`][borg] repositories need to be present in the right location under `/mnt/tailscale/benoitlx.github/{{ backup_host }}/repo.borg/`
 
 To develop on your computer :
   - A Python virtualenv with the [requirements](./requirements.txt) installed
@@ -71,6 +72,13 @@ Then run `just playbook-deploy-infra` and your services should be deployed on yo
     - The forked driver remove the headphone drive. To reanable it search for snc_bcmxxxx in `/etc/modprobe.d/`
 - [ ] watchtower
 - [ ] move from bw cli to rbw cli
+- [ ] borgmatic config template
+    - add a `backup: true or false` in the host yaml
+    - get the backup `ping_url` from vaultwarden (in order to get notification in case of backup failing from uptime kuma)
+- [ ] automatic mount of tailscale share under `/mnt/tailscale` (for backups)
+    - need to install `davfs2` and specify the good entry in `/etc/fstab`
+- [ ] update json-schema with the `no_backup` option
+- [ ] better explain the backup process in the readme
 
 ## Acknowledgements and Inspirations 
 
@@ -95,3 +103,4 @@ Then run `just playbook-deploy-infra` and your services should be deployed on yo
 [wizarr]: https://github.com/Wizarrrr/wizarr
 [open-webui]: https://github.com/open-webui/open-webui
 [piper]: https://github.com/rhasspy/piper
+[borg]: https://www.borgbackup.org/
