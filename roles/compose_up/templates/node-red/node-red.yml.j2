@@ -1,0 +1,18 @@
+
+include:
+  - ts-service.yml
+
+services:
+  nodered:
+    user: "0:0"
+    container_name: node-red 
+    image: nodered/node-red:latest 
+    pull_policy: always
+    volumes:
+      - /home/ansible/{{ item.file }}/config:/data
+    environment:
+      - TZ=Europe/Paris
+    restart: unless-stopped
+    network_mode: service:ts-sidecar
+    depends_on:
+      - ts-sidecar
