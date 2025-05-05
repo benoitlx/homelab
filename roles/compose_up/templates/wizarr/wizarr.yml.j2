@@ -4,6 +4,7 @@ include:
 services:
   wizarr:
     container_name: wizarr
+    pull_policy: always
     image: ghcr.io/wizarrrr/wizarr:latest
     volumes:
       - /home/ansible/{{ item.file }}/config:/data/database
