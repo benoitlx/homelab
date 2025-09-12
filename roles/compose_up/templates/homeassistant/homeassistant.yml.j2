@@ -10,6 +10,9 @@ services:
       - /home/ansible/{{ item.file }}/config:/config
       - /etc/localtime:/etc/localtime:ro
       - /run/dbus:/run/dbus:ro
+    environment:
+      GPIOZERO_PIN_FACTORY: pigpio
+      PIGPIO_ADDR: 192.168.1.142
     restart: unless-stopped
     privileged: true
     network_mode: service:ts-sidecar
