@@ -1,0 +1,15 @@
+include:
+  - ts-service.yml
+
+services:
+  vaultwarden:
+    container_name: vaultwarden
+    image: vaultwarden/server:latest
+    pull_policy: always
+    volumes:
+      - /home/ansible/{{ item.file }}/config:/data
+    restart: unless-stopped
+    network_mode: service:ts-sidecar
+    depends_on:
+      - ts-sidecar
+  
