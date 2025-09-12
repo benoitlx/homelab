@@ -27,7 +27,7 @@ On the computer running the playbooks :
 - A python virtualenv with the [requirements](./requirements.txt) installed
 - `figlet` and `lolcat` installed, to generate beautiful ASCII art in the MOTD banner
 - The [bitwarden client][bw-cli] for secrets management
-    - You will need to unlock your vault before running playbooks containing secrets 
+    - You will need to unlock your vault before running playbooks containing secrets
 - Recommended: the [`just`][just-manual] command runner
 
 On the managed servers:
@@ -42,7 +42,7 @@ To develop on your computer :
 
 Create a [`hosts`][inventory] file with the target hostnames.
 
-Create a directory `host_vars` (like the directory [`host_var_examples`](host_var_examples/)) for host specific variables. 
+Create a directory `host_vars` (like the directory [`host_var_examples`](host_var_examples/)) for host specific variables.
 For each host create a yaml file in `host_vars` indicating which service to run on the host.
 
 Here is an example of what should be inside these files for running the [homeassistant](/roles/compose_up/templates/homeassistant/homeassistant.yml.j2) service using the specified compose file.
@@ -53,7 +53,7 @@ Here is an example of what should be inside these files for running the [homeass
 compose:
   - file: homeassistant
     name: home
-    serve: 
+    serve:
       - 8123
 ```
 
@@ -80,7 +80,7 @@ Then run `just playbook-deploy-infra` and your services should be deployed on yo
 - [ ] update json-schema with the `no_backup` option
 - [ ] better explain the backup process in the readme
 
-## Acknowledgements and Inspirations 
+## Acknowledgements and Inspirations
 
 - [Rezoleo's playbook](https://github.com/rezoleo/ansible-playbooks/)
 - [tailscale ansible role](https://github.com/artis3n/ansible-role-tailscale)
