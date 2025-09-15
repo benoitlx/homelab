@@ -1,0 +1,11 @@
+services:
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto:latest
+    pull_policy: always
+    volumes:
+      - /home/ansible/{{ item.file }}/config:/mosquitto
+    ports:
+      - 1883:1883
+      - 9001:9001
+    restart: unless-stopped
