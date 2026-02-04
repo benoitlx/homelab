@@ -24,7 +24,7 @@ This playbook specifically target [raspberry pi][rpi] and machines on [fedora][f
 ### Prerequisites
 
 On the computer running the playbooks :
-- A python virtualenv with the [requirements](./requirements.txt) installed
+- A python virtualenv with the [requirements](./requirements.txt) installed (`just venv`)
 - `figlet` and `lolcat` installed, to generate beautiful ASCII art in the MOTD banner
 - The [bitwarden client][bw-cli] for secrets management
     - You will need to unlock your vault before running playbooks containing secrets
@@ -35,7 +35,7 @@ On the managed servers:
 - For backups, necessary [`borg`][borg] repositories need to be present in the right location under `/mnt/tailscale/benoitlx.github/{{ backup_host }}/repo.borg/`
 
 To develop on your computer :
-  - A Python virtualenv with the [requirements](./requirements.txt) installed
+  - A Python virtualenv with the [requirements](./requirements.txt) installed (`just venv`)
   - Recommended: Visual Studio Code with the [`Ansible` extension][ansible-vscode-extension] (you should be prompted to install it when opening the project)
 
 ### Usage
