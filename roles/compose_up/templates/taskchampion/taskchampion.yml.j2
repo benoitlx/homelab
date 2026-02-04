@@ -1,0 +1,22 @@
+include:
+  - ts-service.yml
+
+services:
+  taskchampion:
+    container_name: task
+    image: ghcr.io/gothenburgbitfactory/taskchampion-sync-server:0.7.1
+    pull_policy: always
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+      - /home/ansible/{{ item.file }}/config:/var/lib/taskchampion-sync-server/data
+    environment:
+      - "RUST_LOG=info"
+      - "DATA_DIR=/var/lib/taskchampion-sync-server/data"
+      - "LISTEN=0.0.0.0:8080"
+      - "CLIENT_ID=2c92df31-5cfd-4466-83bb-7d7096386782"
+    restart: unless-stopped
+    network_mode: service:ts-sidecar
+    depends_on:
+      - ts-sidecar
+  
