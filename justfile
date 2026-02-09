@@ -29,7 +29,8 @@ playbook-deploy-infra *ARGS: (run_playbook "playbooks/deploy-server.yml" ARGS)
 # Setup a virtualenv and install dependencies
 [group('tooling')]
 venv:
-    [[ -d .venv ]] || (python -m venv .venv && {{venv_bin}}/pip install -r requirements.txt && source .venv/bin/activate && ansible-galaxy install -r galaxy.ansible.yml)
+    #!/usr/bin/env bash
+    [[ -d .venv ]] || (python3 -m venv .venv && {{venv_bin}}/pip install -r requirements.txt && {{venv_bin}}/ansible-galaxy install -r galaxy.ansible.yml)
 
 # Run ansible-lint
 [group('tooling')]
