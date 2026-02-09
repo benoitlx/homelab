@@ -11,7 +11,7 @@ default:
     @just --list --justfile {{justfile()}}
 
 [private]
-run_playbook playbook *ARGS: venv
+run_playbook playbook *ARGS:
     {{venv_bin}}/ansible-playbook --inventory {{inventory}} {{playbook}} {{ARGS}}
 
 
@@ -29,7 +29,7 @@ playbook-deploy-infra *ARGS: (run_playbook "playbooks/deploy-server.yml" ARGS)
 # Setup a virtualenv and install dependencies
 [group('tooling')]
 venv:
-    [[ -d .venv ]] || (python -m venv .venv && {{venv_bin}}/pip install -r requirements.txt && source .venv/bin/activate && ansible-galaxy install -r requirements.yml)
+    [[ -d .venv ]] || (python -m venv .venv && {{venv_bin}}/pip install -r requirements.txt && source .venv/bin/activate && ansible-galaxy install -r galaxy.ansible.yml)
 
 # Run ansible-lint
 [group('tooling')]
