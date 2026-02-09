@@ -18,4 +18,4 @@
     "labels": ["security", "{{vulnerabilitySeverity}}"],
     "enabled": true
   }
-}}
+}
