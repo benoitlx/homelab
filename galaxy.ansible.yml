@@ -1,2 +1,4 @@
-# from galaxy
-- name: artis3n.tailscale
+---
+collections:
+  - name: artis3n.tailscale
+    version: "1.0.1"
