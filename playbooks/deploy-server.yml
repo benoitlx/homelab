@@ -17,7 +17,7 @@
   roles:
     - common
     - docker
-    - role: artis3n.tailscale.machine
+    - role: artis3n.tailscale
       vars:
         tailscale_authkey: "{{ lookup('community.general.bitwarden', 'tailscale_auth_key', field='notes')[0] }}"
       when: not tailscale_installed
