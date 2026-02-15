@@ -13,6 +13,9 @@ services:
     environment:
       GPIOZERO_PIN_FACTORY: pigpio
       PIGPIO_ADDR: 192.168.1.142
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
     restart: unless-stopped
     privileged: true
     network_mode: service:ts-sidecar
