@@ -1,11 +1,14 @@
-- name: Add Docker GPG apt Key
-  ansible.builtin.apt_key:
+- name: Add Docker GPG Key
+  ansible.builtin.get_url:
     url: https://download.docker.com/linux/debian/gpg
-    state: present
+    dest: /etc/apt/keyrings/docker.asc
+    mode: "0644"
+    owner: root
+    checksum: sha256:1500c1f56fa9e26b9b8f42452a553675796ade0807cdce11975eb98170b3a570
 
 - name: Add Docker Repository
   ansible.builtin.apt_repository:
-    repo: deb https://download.docker.com/linux/debian bookworm stable
+    repo: deb [signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian {{ ansible_facts["distribution_release"] }} stable
     state: present
 
 - name: Update apt and install docker
