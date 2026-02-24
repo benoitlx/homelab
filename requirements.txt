@@ -1,4 +1,4 @@
-ansible==13.3.0
+ansible==13.4.0
 
 # Development dependencies
 # could be moved to a requirements-dev.txt
