@@ -2,5 +2,5 @@ ansible==13.4.0
 
 # Development dependencies
 # could be moved to a requirements-dev.txt
-ansible-lint==26.1.1
+ansible-lint==26.2.0
 ansible-cmdb==1.31
