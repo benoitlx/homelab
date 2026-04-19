@@ -32,7 +32,7 @@ jobs:
         run: just lint --offline --sarif-file ansible-lint.sarif.json
 
       - name: Upload Ansible-Lint SARIF
-        uses: github/codeql-action/upload-sarif@c10b8064de6f491fea524254123dbe5e09572f13 # v4
+        uses: github/codeql-action/upload-sarif@95e58e9a2cdfd71adc6e0353d5c52f41a045d225 # v4
         with:
           sarif_file: ansible-lint.sarif.json
           category: ansible-lint
