@@ -22,3 +22,9 @@
         tailscale_authkey: "{{ lookup('community.general.bitwarden', 'tailscale_auth_key', field='notes')[0] }}"
       when: not tailscale_installed
     - compose_up
+
+- name: Network
+  hosts: dnsmasq_servers
+  become: true
+  roles:
+    - dnsmasq
