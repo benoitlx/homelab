@@ -20,7 +20,7 @@ jobs:
           cache: pip
       
       - name: Setup just
-        uses: taiki-e/install-action@7e4a4ef9ed66446ab203dacde3df96698830955f # just
+        uses: taiki-e/install-action@ea85faa6acd705ad6d40586db99f1a70b09c2929 # just
 
       - name: Create virtual environment and install dependencies
         run: |
