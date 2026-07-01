@@ -5,6 +5,7 @@ hosts
 hosts.*
 !hosts.example
 host_vars/
+group_vars/
 
 # Ignore ansible-cmdb files
 out/

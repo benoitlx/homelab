@@ -42,13 +42,13 @@ To develop on your computer :
 
 Create a [`hosts`][inventory] file with the target hostnames.
 
-Create a directory `host_vars` (like the directory [`host_var_examples`](host_var_examples/)) for host specific variables.
+Create a directory `host_vars` (like the directory [`host_vars_example`](host_vars_example/)) for host specific variables.
 For each host create a yaml file in `host_vars` indicating which service to run on the host.
 
 Here is an example of what should be inside these files for running the [homeassistant](/roles/compose_up/templates/homeassistant/homeassistant.yml.j2) service using the specified compose file.
 
 ```yaml
-# yaml-language-server: $schema=../host_var_examples/schema.json
+# yaml-language-server: $schema=../host_vars_example/schema.json
 
 compose:
   - file: homeassistant
@@ -57,7 +57,7 @@ compose:
       - 8123
 ```
 
-A full example is available [here](/host_var_examples/example.com.yml), as well as a [json-schema](/host_var_examples/schema.json).
+A full example is available [here](/host_vars_example/example.com.yml), as well as a [json-schema](/host_vars_example/schema.json).
 
 > [!WARNING]
 > Even if you don't want to deploy services on a device you should create this file with `compose:`

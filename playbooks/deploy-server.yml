@@ -1,5 +1,11 @@
-- name: Servers
+- name: Common
   hosts: all
+  become: true
+  roles:
+    - common
+
+- name: Servers
+  hosts: all:!control_server
   become: true
 
   pre_tasks:
@@ -15,7 +21,6 @@
         tailscale_installed: "{{ tailscale_check.rc == 0 }}"
 
   roles:
-    - common
     - docker
     - role: artis3n.tailscale.machine
       vars:
@@ -28,3 +33,11 @@
   become: true
   roles:
     - dnsmasq
+
+- name: Control Server
+  hosts: control_server
+  become: true
+  roles:
+    - headscale
+    - caddy
+    - fail2ban
