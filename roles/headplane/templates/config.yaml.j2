@@ -1,0 +1,12 @@
+server:
+  port: {{ headplane_port }}
+  cookie_secret: {{ headplane_cookie_secret }}
+
+headscale:
+  url: {{ headplane_headscale_url }}
+  config_path: {{ headplane_headscale_config_path }}
+  api_key: {{ lookup('community.general.bitwarden', 'headscale_api_key', field='notes')[0] }}
+
+integration:
+  proc:
+    enabled: true

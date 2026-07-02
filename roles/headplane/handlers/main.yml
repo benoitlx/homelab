@@ -1,0 +1,5 @@
+---
+- name: Restart headplane
+  ansible.builtin.service:
+    name: headplane
+    state: restarted

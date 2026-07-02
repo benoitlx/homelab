@@ -39,5 +39,6 @@
   become: true
   roles:
     - headscale
+    - headplane
     - caddy
     - fail2ban

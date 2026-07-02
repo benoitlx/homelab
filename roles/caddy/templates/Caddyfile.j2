@@ -14,3 +14,7 @@ http://{{ caddy_headscale_domain }} {
         header_up X-Real-IP {remote_host}
     }
 }
+
+{{ caddy_headplane_domain }} {
+    reverse_proxy localhost:{{ caddy_headplane_backend_port }}
+}
