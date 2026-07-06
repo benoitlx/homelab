@@ -23,6 +23,14 @@ playbook-create-ansible-user *ARGS: (run_playbook "playbooks/create-ansible-user
 [group('playbooks')]
 playbook-deploy-infra *ARGS: (run_playbook "playbooks/deploy-server.yml" ARGS)
 
+# Provision the control-server (headscale, headplane, caddy, fail2ban)
+[group('playbooks')]
+playbook-deploy-control-server *ARGS: (run_playbook "playbooks/deploy-control-server.yml" ARGS)
+
+# First-pass bootstrap of the control-server: skips roles needing secrets that only exist once Headscale is up (tailscale auth key, headscale API key)
+[group('playbooks')]
+playbook-bootstrap-control-server *ARGS: (run_playbook "playbooks/deploy-control-server.yml" "--skip-tags" "needs-secrets" ARGS)
+
 
 # Login to Vault
 
