@@ -1,7 +1,4 @@
 ---
-headscale_server_url: "https://headscale.yourdomain.com"
-headscale_base_domain: "ts.yourdomain.com"
-
 caddy_headscale_domain: "headscale.yourdomain.com"
 caddy_headplane_domain: "headplane.yourdomain.com"
 

@@ -1,3 +1,14 @@
+{
+    acme_dns ovh {
+        endpoint {{ caddy_ovh_endpoint }}
+        application_key {{ caddy_ovh_application_key }}
+        application_secret {{ caddy_ovh_application_secret }}
+        consumer_key {{ caddy_ovh_consumer_key }}
+    }
+}
+
+import sites/*.Caddyfile
+
 http://{{ caddy_headscale_domain }} {
     handle /generate_204 {
         respond 204

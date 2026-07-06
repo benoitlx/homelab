@@ -1,0 +1,19 @@
+services:
+  caddy-sidecar:
+    image: homelab/caddy-ovh:latest
+    container_name: "{{ item.name }}-caddy"
+    network_mode: service:ts-sidecar
+    volumes:
+      - caddy_volume:/data
+      - /home/ansible/{{ item.file }}/Caddyfile:/etc/caddy/Caddyfile:ro
+    environment:
+      - CADDY_OVH_APPLICATION_KEY={{ caddy_ovh_application_key }}
+      - CADDY_OVH_APPLICATION_SECRET={{ caddy_ovh_application_secret }}
+      - CADDY_OVH_CONSUMER_KEY={{ caddy_ovh_consumer_key }}
+    restart: unless-stopped
+    depends_on:
+      - ts-sidecar
+
+volumes:
+  caddy_volume:
+    external: true

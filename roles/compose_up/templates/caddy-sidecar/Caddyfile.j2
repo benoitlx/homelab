@@ -1,0 +1,18 @@
+{
+    # DNS-01 challenge only; no need for the port 80 HTTP->HTTPS redirect
+    # listener, which would collide with the app's own port in this
+    # shared network namespace.
+    auto_https disable_redirects
+}
+
+*.{{ public_base_domain }} {
+    tls {
+        dns ovh {
+            endpoint {{ caddy_ovh_endpoint }}
+            application_key {env.CADDY_OVH_APPLICATION_KEY}
+            application_secret {env.CADDY_OVH_APPLICATION_SECRET}
+            consumer_key {env.CADDY_OVH_CONSUMER_KEY}
+        }
+    }
+    reverse_proxy localhost:{{ caddy_port }}
+}

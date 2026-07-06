@@ -38,6 +38,10 @@
   hosts: control_server
   become: true
   roles:
+    - role: artis3n.tailscale.machine
+      vars:
+        tailscale_authkey: "{{ lookup('community.general.bitwarden', 'tailscale_auth_key', field='notes')[0] }}"
+        tailscale_args: "--login-server=http://127.0.0.1:8080 --accept-dns"
     - headscale
     - headplane
     - caddy

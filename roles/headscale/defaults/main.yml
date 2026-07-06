@@ -6,3 +6,4 @@ headscale_listen_addr: "127.0.0.1:8080"
 
 headscale_db_path: "/var/lib/headscale/db.sqlite"
 headscale_noise_private_key_path: "/var/lib/headscale/noise_private.key"
+headscale_acl_policy_path: "/etc/headscale/acl-policy.hujson"

@@ -39,6 +39,10 @@ dns:
       - 1.1.1.1
       - 8.8.8.8
 
+policy:
+  mode: file
+  path: {{ headscale_acl_policy_path }}
+
 unix_socket: /var/run/headscale/headscale.sock
 unix_socket_permission: "0770"
 

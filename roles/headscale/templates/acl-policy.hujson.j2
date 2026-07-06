@@ -1,0 +1,25 @@
+{
+  // Tags advertised by service sidecars (see host_vars */services/*/tags).
+  // Grants the "ansible-managed" user the right to self-assign these via --advertise-tags.
+  // Headscale requires a trailing "@" to disambiguate a plain username from
+  // a group/tag alias (see hscontrol/policy/v2 parseOwner/isUser).
+  "tagOwners": {
+    "tag:public": ["ansible-managed@"],
+    "tag:semi-private": ["ansible-managed@"],
+    "tag:private": ["ansible-managed@"],
+    "tag:pi4": ["ansible-managed@"],
+    "tag:pi5rez": ["ansible-managed@"],
+    "tag:fedora-fixe": ["ansible-managed@"],
+    "tag:sat": ["ansible-managed@"]
+  },
+
+  // Accept-all for now — no per-tag segmentation yet, this just unblocks
+  // tag registration without changing current connectivity.
+  "acls": [
+    {
+      "action": "accept",
+      "src": ["*"],
+      "dst": ["*:*"]
+    }
+  ]
+}

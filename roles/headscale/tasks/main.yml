@@ -10,6 +10,15 @@
     deb: "/tmp/headscale_{{ headscale_version }}_linux_{{ headscale_arch }}.deb"
     state: present
 
+- name: Copy headscale ACL policy
+  ansible.builtin.template:
+    src: templates/acl-policy.hujson.j2
+    dest: "{{ headscale_acl_policy_path }}"
+    owner: headscale
+    group: headscale
+    mode: '640'
+  notify: Restart headscale
+
 - name: Copy headscale config
   ansible.builtin.template:
     src: templates/config.yaml.j2
