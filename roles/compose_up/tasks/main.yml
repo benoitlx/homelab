@@ -10,6 +10,7 @@
   loop: "{{ services | default([], true) }}"
   loop_control:
     label: "{{ item.name }}"
+  when: compose_up_only is not defined or item.name == compose_up_only
 
 - name: Create Compose Directories
   ansible.builtin.file:

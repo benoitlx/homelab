@@ -1,6 +1,11 @@
 # Secrets
 
-All secrets are stored as items in the `ansible` Vaultwarden vault and fetched at deploy time via:
+> [!NOTE]
+> Deploying for the very first time? Vaultwarden itself is one of the services
+> deployed by these playbooks, so it can't hold any secrets yet on a fresh
+> infra. See [bootstrap.md](bootstrap.md) for the chicken-and-egg procedure.
+
+All secrets are stored as items in the `ansible` Vaultwarden vault (self-hosted, no cloud fallback) and fetched at deploy time via:
 
 ```
 lookup('community.general.bitwarden', '<item name>', field='notes')[0]
@@ -12,9 +17,9 @@ The secret value goes in the item's **notes** field (not password), matching the
 
 | Vaultwarden item name | Value | File | Role |
 |---|---|---|---|
-| `tailscale_auth_key` | A **reusable** Headscale pre-auth key, no tags (`headscale preauthkeys create --user ansible-managed --reusable --expiration <long>`) | `playbooks/deploy-server.yml` (`Servers` play) | `artis3n.tailscale.machine` |
+| `tailscale_auth_key` | A **reusable** Headscale pre-auth key, no tags (`headscale preauthkeys create --user ansible-managed --reusable --expiration <long>`) | `playbooks/deploy-services.yml` (`Servers` play) | `artis3n.tailscale.machine` |
 | `tailscale_auth_key` | (same value as above) | `roles/compose_up/templates/ts-service/ts-service.yml.j2` | `compose_up` |
-| `headscale_api_key` | Headscale API key, used by Headplane's admin UI | `roles/headplane/templates/config.yaml.j2` | `headplane` |
+| `headscale_api_key` | Headscale API key, used by Headplane's admin UI (`headscale apikeys create`) | `roles/headplane/templates/config.yaml.j2` | `headplane` |
 | `caddy_ovh_application_key` | OVH API application key (https://api.ovh.com/createToken/) | `group_vars/all.yml` | `caddy`, `compose_up` |
 | `caddy_ovh_application_secret` | OVH API application secret | `group_vars/all.yml` | `caddy`, `compose_up` |
 | `caddy_ovh_consumer_key` | OVH API consumer key | `group_vars/all.yml` | `caddy`, `compose_up` |

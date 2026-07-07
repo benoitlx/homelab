@@ -50,19 +50,25 @@ Here is an example of what should be inside these files for running the [homeass
 ```yaml
 # yaml-language-server: $schema=../host_vars_example/schema.json
 
-compose:
-  - file: homeassistant
-    name: home
-    serve:
-      - 8123
+services:
+  - name: home
+    file: homeassistant
+    public: true
+    port: 8123
 ```
 
 A full example is available [here](/host_vars_example/example.com.yml), as well as a [json-schema](/host_vars_example/schema.json).
 
 > [!WARNING]
-> Even if you don't want to deploy services on a device you should create this file with `compose:`
+> Even if you don't want to deploy services on a device you should create this file with `services:`
 
-Then run `just playbook-deploy-infra` and your services should be deployed on your machines.
+The control-server (Headscale, Caddy, fail2ban) and the rest of your machines are deployed by two separate playbooks:
+
+- `just playbook-deploy-control-server` provisions the control-server
+- `just playbook-deploy-services` provisions every other machine, compose services included
+
+> [!NOTE]
+> Deploying for the very first time ? All secrets live in a self-hosted Vaultwarden vault, which is itself one of the services deployed by these playbooks, so there's a specific order to follow, see [docs/bootstrap.md](docs/bootstrap.md).
 
 ## TODO
 

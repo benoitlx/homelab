@@ -23,10 +23,12 @@
   roles:
     - docker
     - role: artis3n.tailscale.machine
+      tags: [needs-secrets]
       vars:
         tailscale_authkey: "{{ lookup('community.general.bitwarden', 'tailscale_auth_key', field='notes')[0] }}"
       when: not tailscale_installed
-    - compose_up
+    - role: compose_up
+      tags: [needs-secrets]
 
 - name: Network
   hosts: dnsmasq_servers
