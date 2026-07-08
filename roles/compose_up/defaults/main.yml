@@ -1,0 +1,8 @@
+---
+# Headscale user that owns the pre-auth keys minted per node (see docs/secrets.md).
+compose_up_headscale_user: ansible-managed
+
+# Lifetime of a freshly minted pre-auth key. Only needs to survive long enough
+# for the sidecar's very first registration, since restarts of an already
+# registered node don't re-consume it.
+compose_up_preauthkey_expiration_seconds: 3600

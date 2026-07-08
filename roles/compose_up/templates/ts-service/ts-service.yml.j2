@@ -7,6 +7,7 @@ services:
       - TS_AUTHKEY={{ tailscale_authkey }}
       - TS_EXTRA_ARGS=--login-server={{ headscale_server_url }} --reset
       - TS_STATE_DIR=/var/lib/tailscale
+      - TS_AUTH_ONCE=true
     volumes:
       - /home/ansible/{{ item.file }}/ts/state:/var/lib/tailscale
     devices:

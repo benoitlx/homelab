@@ -1,0 +1,58 @@
+---
+# Included per item (loop_var: item) for services where item.headscale_node is true.
+#
+# A node only actually consumes TS_AUTHKEY on its very first registration —
+# once it has persisted Tailscale state, restarts reuse that identity and
+# ignore whatever key is in the compose file. So we only call the Headscale
+# API (and only change the rendered file) for nodes that aren't registered
+# yet; already-registered nodes get a stable placeholder, keeping the compose
+# file byte-identical across runs and avoiding needless container recreates.
+
+- name: Check for existing Tailscale state for {{ item.name }}
+  ansible.builtin.stat:
+    path: "/home/ansible/{{ item.file }}/ts/state/tailscaled.state"
+  register: compose_up_ts_state
+
+- name: Mint a tagged Headscale pre-auth key for {{ item.name }}
+  when: not compose_up_ts_state.stat.exists
+  block:
+    - name: Mint the pre-auth key
+      ansible.builtin.include_role:
+        name: headscale_preauthkey
+      vars:
+        headscale_api_key: "{{ lookup('community.general.bitwarden', 'headscale_api_key', field='notes')[0] }}"
+        headscale_preauthkey_user: "{{ compose_up_headscale_user }}"
+        headscale_preauthkey_expiration_seconds: "{{ compose_up_preauthkey_expiration_seconds }}"
+        headscale_preauthkey_tags: "{{ (item.tags | default([])) + [inventory_hostname.split('.')[0]] }}"
+
+    - name: Use the freshly minted key for this node
+      ansible.builtin.set_fact:
+        compose_up_node_authkey: "{{ headscale_preauthkey_key }}"
+      no_log: true
+
+- name: Reuse a stable placeholder for {{ item.name }} (already registered)
+  ansible.builtin.set_fact:
+    compose_up_node_authkey: unused-already-registered
+  when: compose_up_ts_state.stat.exists
+
+- name: Copy docker compose file for {{ item.name }}
+  ansible.builtin.template:
+    src: "templates/{{ item.file }}/{{ item.file }}.yml.j2"
+    dest: "/home/ansible/{{ item.file }}/docker-compose.yml"
+    owner: root
+    group: root
+    mode: '664'
+  vars:
+    tailscale_authkey: "{{ compose_up_node_authkey }}"
+  no_log: true
+
+- name: Copy Tailscale sidecar compose file for {{ item.name }}
+  ansible.builtin.template:
+    src: templates/ts-service/ts-service.yml.j2
+    dest: "/home/ansible/{{ item.file }}/ts-service.yml"
+    owner: root
+    group: root
+    mode: '664'
+  vars:
+    tailscale_authkey: "{{ compose_up_node_authkey }}"
+  no_log: true

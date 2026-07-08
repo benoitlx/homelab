@@ -63,7 +63,7 @@
     label: "{{ caddy_item.name }}"
   when: not caddy_item.public and caddy_item.headscale_node and caddy_item.tls
 
-- name: Copy docker compose files
+- name: Copy docker compose files (services without a Headscale node)
   ansible.builtin.template:
     src: templates/{{ item.file }}/{{ item.file }}.yml.j2
     dest: /home/ansible/{{ item.file }}/docker-compose.yml
@@ -73,22 +73,16 @@
   loop: "{{ compose_up_services_normalized | default([], true) }}"
   loop_control:
     label: "{{ item.name }}"
-  vars:
-    tailscale_authkey: "{{ lookup('community.general.bitwarden', 'tailscale_auth_key', field='notes')[0] }}"
+  when: not item.headscale_node
 
-- name: Copy Tailscale Sidecar Compose Files
-  ansible.builtin.template:
-    src: templates/ts-service/ts-service.yml.j2
-    dest: /home/ansible/{{ item.file }}/ts-service.yml
-    owner: root
-    group: root
-    mode: '664'
+# Mints a per-node, per-service-tags Headscale pre-auth key (see
+# headscale_preauthkey.yml) and renders both compose files for the item.
+- name: Render compose files for Headscale-backed services
+  ansible.builtin.include_tasks: headscale_preauthkey.yml
   loop: "{{ compose_up_services_normalized | default([], true) }}"
   loop_control:
     label: "{{ item.name }}"
   when: item.headscale_node
-  vars:
-    tailscale_authkey: "{{ lookup('community.general.bitwarden', 'tailscale_auth_key', field='notes')[0] }}"
 
 - name: Deploy dockers
   community.docker.docker_compose_v2:

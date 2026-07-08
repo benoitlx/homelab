@@ -9,9 +9,9 @@
   become: true
 
   pre_tasks:
-    - name: Check if Tailscale is installed
+    - name: Check if Tailscale is up
       ansible.builtin.shell: |
-        tailscale version
+        tailscale status
       register: tailscale_check
       ignore_errors: true
       changed_when: false
@@ -20,12 +20,19 @@
       ansible.builtin.set_fact:
         tailscale_installed: "{{ tailscale_check.rc == 0 }}"
 
+    - name: Mint a Headscale pre-auth key for this host
+      ansible.builtin.include_tasks: tasks/mint_tailscale_authkey.yml
+      tags: [needs-secrets]
+      when: not tailscale_installed
+      vars:
+        headscale_api_key: "{{ lookup('community.general.bitwarden', 'headscale_api_key', field='notes')[0] }}"
+
   roles:
     - docker
     - role: artis3n.tailscale.machine
       tags: [needs-secrets]
       vars:
-        tailscale_authkey: "{{ lookup('community.general.bitwarden', 'tailscale_auth_key', field='notes')[0] }}"
+        tailscale_args: "--login-server={{ headscale_server_url }} {{ tailscale_extra_args | default('') }}"
       when: not tailscale_installed
     - role: compose_up
       tags: [needs-secrets]

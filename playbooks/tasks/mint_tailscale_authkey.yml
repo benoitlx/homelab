@@ -1,0 +1,21 @@
+---
+# Mints a single-use Headscale pre-auth key for this host's own Tailscale
+# client, tagged with the host's own name. Thin wrapper around the shared
+# roles/headscale_preauthkey role (see roles/compose_up/tasks/headscale_preauthkey.yml
+# for the per-service equivalent). Only meant to be included when the host
+# isn't registered yet (when: not tailscale_installed).
+#
+# Requires headscale_api_key to be set by the caller. Tagged with the host's
+# own name, so it needs a matching entry in
+# roles/headscale/templates/acl-policy.hujson.j2 tagOwners.
+
+- name: Mint the pre-auth key
+  ansible.builtin.include_role:
+    name: headscale_preauthkey
+  vars:
+    headscale_preauthkey_tags: ["{{ inventory_hostname.split('.')[0] }}"]
+
+- name: Use the freshly minted key for this host's Tailscale client
+  ansible.builtin.set_fact:
+    tailscale_authkey: "{{ headscale_preauthkey_key }}"
+  no_log: true
