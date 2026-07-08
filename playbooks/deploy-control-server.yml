@@ -39,7 +39,7 @@
       tags: [needs-secrets]
       when: not tailscale_installed
       vars:
-        headscale_api_key: "{{ lookup('community.general.bitwarden', 'headscale_api_key', field='notes')[0] }}"
+        headscale_preauthkey_api_key: "{{ lookup('community.general.bitwarden', 'headscale_api_key', field='notes')[0] }}"
 
   roles:
     - role: artis3n.tailscale.machine

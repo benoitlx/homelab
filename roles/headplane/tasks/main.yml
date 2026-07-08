@@ -37,20 +37,9 @@
     dest: "{{ headplane_install_dir }}"
     version: "{{ headplane_version }}"
     force: false
-  register: git_clone
-
-- name: Install pnpm dependencies
-  ansible.builtin.command:
-    cmd: pnpm install
-    chdir: "{{ headplane_install_dir }}"
-  when: git_clone.changed
-
-- name: Build headplane
-  ansible.builtin.command:
-    cmd: pnpm build
-    chdir: "{{ headplane_install_dir }}"
-  when: git_clone.changed
-  notify: Restart headplane
+  notify:
+    - Install pnpm dependencies
+    - Build headplane
 
 - name: Create data directory
   ansible.builtin.file:

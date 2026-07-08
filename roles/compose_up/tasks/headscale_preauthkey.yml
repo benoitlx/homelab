@@ -20,7 +20,7 @@
       ansible.builtin.include_role:
         name: headscale_preauthkey
       vars:
-        headscale_api_key: "{{ lookup('community.general.bitwarden', 'headscale_api_key', field='notes')[0] }}"
+        headscale_preauthkey_api_key: "{{ lookup('community.general.bitwarden', 'headscale_api_key', field='notes')[0] }}"
         headscale_preauthkey_user: "{{ compose_up_headscale_user }}"
         headscale_preauthkey_expiration_seconds: "{{ compose_up_preauthkey_expiration_seconds }}"
         headscale_preauthkey_tags: "{{ (item.tags | default([])) + [inventory_hostname.split('.')[0]] }}"
@@ -30,7 +30,7 @@
         compose_up_node_authkey: "{{ headscale_preauthkey_key }}"
       no_log: true
 
-- name: Reuse a stable placeholder for {{ item.name }} (already registered)
+- name: Reuse a stable, already-registered placeholder for {{ item.name }}
   ansible.builtin.set_fact:
     compose_up_node_authkey: unused-already-registered
   when: compose_up_ts_state.stat.exists

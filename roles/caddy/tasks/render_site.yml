@@ -1,5 +1,5 @@
 ---
-- name: Render Caddyfile for {{ target_host }} funneled services
+- name: Render public services Caddyfile for {{ target_host }}
   ansible.builtin.template:
     src: templates/site.Caddyfile.j2
     dest: "/etc/caddy/sites/{{ item.name }}.Caddyfile"

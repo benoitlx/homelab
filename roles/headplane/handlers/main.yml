@@ -1,4 +1,17 @@
 ---
+- name: Install pnpm dependencies
+  ansible.builtin.command:
+    cmd: pnpm install
+    chdir: "{{ headplane_install_dir }}"
+  changed_when: true
+
+- name: Build headplane
+  ansible.builtin.command:
+    cmd: pnpm build
+    chdir: "{{ headplane_install_dir }}"
+  changed_when: true
+  notify: Restart headplane
+
 - name: Restart headplane
   ansible.builtin.service:
     name: headplane

@@ -4,7 +4,7 @@
 # playbooks/tasks/mint_tailscale_authkey.yml (host-level joins) - see
 # docs/secrets.md.
 #
-# Required caller input: headscale_api_key.
+# Required caller input: headscale_preauthkey_api_key.
 # Produces: headscale_preauthkey_key (fact, no_log'd).
 #
 # Always delegated to localhost (the machine running the playbook), hitting
@@ -16,7 +16,7 @@
   ansible.builtin.uri:
     url: "{{ headscale_server_url }}/api/v1/user?name={{ headscale_preauthkey_user }}"
     headers:
-      Authorization: "Bearer {{ headscale_api_key }}"
+      Authorization: "Bearer {{ headscale_preauthkey_api_key }}"
   register: headscale_preauthkey_user_lookup
   delegate_to: localhost
   become: false
@@ -33,7 +33,7 @@
     url: "{{ headscale_server_url }}/api/v1/preauthkey"
     method: POST
     headers:
-      Authorization: "Bearer {{ headscale_api_key }}"
+      Authorization: "Bearer {{ headscale_preauthkey_api_key }}"
     body_format: json
     body:
       user: "{{ headscale_preauthkey_user_id }}"
