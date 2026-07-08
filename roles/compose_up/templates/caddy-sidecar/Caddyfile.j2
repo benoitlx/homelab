@@ -1,6 +1,7 @@
 {
-    # DNS-01 challenge only; no need for the port 80 HTTP->HTTPS redirect
-    # listener, which would collide with the app's own port in this
+    # no need for the port 80 http to https redirect
+    # listener, which could (ex with vault service) 
+    # collide with the app's own port in this
     # shared network namespace.
     auto_https disable_redirects
 }

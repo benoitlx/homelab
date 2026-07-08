@@ -1,9 +1,9 @@
 ---
-# Included per item (loop_var: item) for services where item.headscale_node is true.
+# Included per item for services where item.headscale_node is true.
 #
-# A node only actually consumes TS_AUTHKEY on its very first registration —
+# A node only actually consumes TS_AUTHKEY on its very first registration
 # once it has persisted Tailscale state, restarts reuse that identity and
-# ignore whatever key is in the compose file. So we only call the Headscale
+# ignore whatever key is in the compose file. So the task only call the Headscale
 # API (and only change the rendered file) for nodes that aren't registered
 # yet; already-registered nodes get a stable placeholder, keeping the compose
 # file byte-identical across runs and avoiding needless container recreates.

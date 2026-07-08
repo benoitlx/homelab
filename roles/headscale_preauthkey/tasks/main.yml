@@ -1,11 +1,10 @@
 ---
-# Mints a fresh, single-use Headscale pre-auth key via the Headscale API.
+# Forge a fresh, single-use Headscale pre-auth key via the Headscale API.
 # Shared between roles/compose_up (per-service sidecars) and
-# playbooks/tasks/mint_tailscale_authkey.yml (host-level joins) - see
-# docs/secrets.md.
+# playbooks/tasks/mint_tailscale_authkey.yml (host-level joins) see docs/secrets.md.
 #
 # Required caller input: headscale_preauthkey_api_key.
-# Produces: headscale_preauthkey_key (fact, no_log'd).
+# Produces: headscale_preauthkey_key (fact, not loged).
 #
 # Always delegated to localhost (the machine running the playbook), hitting
 # the public headscale_server_url. The user id lookup is cached in a fact

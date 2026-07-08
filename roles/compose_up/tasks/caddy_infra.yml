@@ -25,6 +25,5 @@
     name: homelab/caddy-ovh
     tag: latest
     source: build
-    force_source: false
     build:
       path: /home/ansible/.caddy-ovh-build
