@@ -5,19 +5,11 @@
 Personnal repository for easy deployment of services running on my homelab.
 This playbook specifically target [raspberry pi][rpi] and machines on [fedora][fedora], but it should works fine for any [debian][debian] based machine.
 
-## What's currently running
+My homelab heavily rely on [tailscale] with a self-hosted control server (see [headscale]) on a VPS to connect every devices to each other.
 
-- A Fedora 41 server running :
-    - [Jellyfin][jellyfin]
-    - [Jellyseer][jellyseer]
-    - The [Arr][arr] suite
-    - [QbitTorrent][qbittorrent]
-    - [faster-whisper][faster-whisper]
-    - [piper][piper]
-    - [ollama][ollama] with a [Web UI][open-webui]
-- A raspberry pi 5 running :
-    - [Home Assistant][homeassistant]
-    - [Wizarr][wizarr]
+## Architecture overview
+
+![](/docs/assets/architecture.svg)
 
 ## Deployment
 
@@ -62,7 +54,7 @@ A full example is available [here](/host_vars_example/example.com.yml), as well 
 > [!WARNING]
 > Even if you don't want to deploy services on a device you should create this file with `services:`
 
-The control-server (Headscale, Caddy, fail2ban) and the rest of your machines are deployed by two separate playbooks:
+The control-server (Headscale, Caddy, fail2ban) and the rest of the machines are deployed by two separate playbooks:
 
 - `just playbook-deploy-control-server` provisions the control-server
 - `just playbook-deploy-services` provisions every other machine, compose services included
@@ -110,3 +102,5 @@ The control-server (Headscale, Caddy, fail2ban) and the rest of your machines ar
 [open-webui]: https://github.com/open-webui/open-webui
 [piper]: https://github.com/rhasspy/piper
 [borg]: https://www.borgbackup.org/
+[tailscale]: https://tailscale.com/
+[headscale]: https://headscale.net/stable/
