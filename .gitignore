@@ -5,6 +5,7 @@ hosts
 hosts.*
 !hosts.example
 host_vars/
+group_vars/
 
 # Ignore ansible-cmdb files
 out/
@@ -12,6 +13,9 @@ overview.html
 
 # Ignore ansible-lint output files
 ansible-lint.sarif.json
+
+# Temporary secrets used to bootstrap Vaultwarden
+.bootstrap-secrets.yml
 
 # VSCode
 .vscode/settings.json

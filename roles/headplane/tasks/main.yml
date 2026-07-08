@@ -1,0 +1,89 @@
+---
+- name: Add NodeSource GPG key
+  ansible.builtin.get_url:
+    url: https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
+    dest: /etc/apt/keyrings/nodesource.asc
+    mode: '0644'
+    owner: root
+
+- name: Add NodeSource repository
+  ansible.builtin.apt_repository:
+    repo: deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesource.com/node_22.x nodistro main
+    state: present
+
+- name: Install Node.js
+  ansible.builtin.apt:
+    name: nodejs
+    state: present
+    update_cache: true
+
+- name: Install pnpm
+  community.general.npm:
+    name: pnpm
+    global: true
+    state: present
+
+- name: Create headplane user
+  ansible.builtin.user:
+    name: headplane
+    system: true
+    shell: /usr/sbin/nologin
+    home: "{{ headplane_data_dir }}"
+    create_home: false
+
+- name: Clone headplane repository
+  ansible.builtin.git:
+    repo: https://github.com/tale/headplane.git
+    dest: "{{ headplane_install_dir }}"
+    version: "{{ headplane_version }}"
+    force: false
+  notify:
+    - Install pnpm dependencies
+    - Build headplane
+
+- name: Create data directory
+  ansible.builtin.file:
+    path: "{{ headplane_data_dir }}"
+    state: directory
+    owner: headplane
+    group: headplane
+    mode: '750'
+
+- name: Create config directory
+  ansible.builtin.file:
+    path: /etc/headplane
+    state: directory
+    owner: root
+    group: headplane
+    mode: '750'
+
+- name: Allow headplane to read and write headscale config
+  ansible.builtin.file:
+    path: /etc/headscale/config.yaml
+    owner: headscale
+    group: headplane
+    mode: '660'
+
+- name: Copy headplane config
+  ansible.builtin.template:
+    src: templates/config.yaml.j2
+    dest: /etc/headplane/config.yaml
+    owner: root
+    group: headplane
+    mode: '640'
+  notify: Restart headplane
+
+- name: Copy systemd service
+  ansible.builtin.template:
+    src: templates/headplane.service.j2
+    dest: /etc/systemd/system/headplane.service
+    owner: root
+    group: root
+    mode: '644'
+  notify: Restart headplane
+
+- name: Enable and start headplane
+  ansible.builtin.service:
+    name: headplane
+    enabled: true
+    state: started

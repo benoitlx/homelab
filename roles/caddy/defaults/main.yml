@@ -1,0 +1,6 @@
+---
+caddy_headscale_backend_port: 8080
+caddy_headplane_backend_port: 3000
+
+caddy_go_version: "1.23.4"
+caddy_go_arch: "amd64"

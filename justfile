@@ -21,7 +21,22 @@ playbook-create-ansible-user *ARGS: (run_playbook "playbooks/create-ansible-user
 
 # Run the main playbook that configures our infrastructure
 [group('playbooks')]
-playbook-deploy-infra *ARGS: (run_playbook "playbooks/deploy-server.yml" ARGS)
+playbook-deploy-services *ARGS: (run_playbook "playbooks/deploy-services.yml" ARGS)
+
+# Provision the control-server (headscale, headplane, caddy, fail2ban)
+[group('playbooks')]
+playbook-deploy-control-server *ARGS: (run_playbook "playbooks/deploy-control-server.yml" ARGS)
+
+
+# First-ever deployment sequence, before Vaultwarden exists - see docs/bootstrap.md
+
+# Stage A: bootstrap the control-server, skipping roles needing Headscale-generated secrets, reading user-provided ones (OVH keys, headplane cookie) from a local temp file
+[group('bootstrap')]
+bootstrap-control-server *ARGS: (run_playbook "playbooks/deploy-control-server.yml" "--skip-tags" "needs-secrets" "--extra-vars" "@.bootstrap-secrets.yml" ARGS)
+
+# Stage B: deploy only Vaultwarden (+ tailscale sidecar) on pi4, reading secrets from the local temp file
+[group('bootstrap')]
+bootstrap-vaultwarden *ARGS: (run_playbook "playbooks/deploy-services.yml" "--limit" "pi4" "-e" "compose_up_only=vault" "--extra-vars" "@.bootstrap-secrets.yml" ARGS)
 
 
 # Login to Vault

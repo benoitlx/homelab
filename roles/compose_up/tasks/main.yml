@@ -1,3 +1,17 @@
+- name: Normalize service definitions (default file/public/headscale_node/tls)
+  ansible.builtin.set_fact:
+    compose_up_services_normalized: >-
+      {{ compose_up_services_normalized | default([]) + [item | combine({
+        'file': item.file | default(item.name),
+        'public': item.public | default(false),
+        'headscale_node': item.headscale_node | default(true),
+        'tls': item.tls | default(true)
+      })] }}
+  loop: "{{ services | default([], true) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: compose_up_only is not defined or item.name == compose_up_only
+
 - name: Create Compose Directories
   ansible.builtin.file:
     path: /home/ansible/{{ item.file }}/
@@ -5,7 +19,9 @@
     owner: root
     group: root
     mode: '775'
-  loop: "{{ compose | default([], true) }}"
+  loop: "{{ compose_up_services_normalized | default([], true) }}"
+  loop_control:
+    label: "{{ item.name }}"
 
 - name: Create Config Directories
   ansible.builtin.file:
@@ -14,7 +30,9 @@
     owner: root
     group: root
     mode: '775'
-  loop: "{{ compose | default([], true) }}"
+  loop: "{{ compose_up_services_normalized | default([], true) }}"
+  loop_control:
+    label: "{{ item.name }}"
 
 - name: Create Tailscale State Directories
   ansible.builtin.file:
@@ -23,51 +41,54 @@
     owner: root
     group: root
     mode: '775'
-  loop: "{{ compose | default([], true) }}"
+  loop: "{{ compose_up_services_normalized | default([], true) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.headscale_node
 
-- name: Create Tailscale Config Directories
-  ansible.builtin.file:
-    path: /home/ansible/{{ item.file }}/ts/config/
-    state: directory
-    owner: root
-    group: root
-    mode: '775'
-  loop: "{{ compose | default([], true) }}"
+- name: Set up shared Caddy sidecar infrastructure
+  ansible.builtin.include_tasks: caddy_infra.yml
+  when: >-
+    compose_up_services_normalized | default([], true)
+    | selectattr('public', 'equalto', false)
+    | selectattr('headscale_node', 'equalto', true)
+    | selectattr('tls', 'equalto', true)
+    | list | length > 0
 
-- name: Copy docker compose files
+- name: Render per-service Caddy sidecar files
+  ansible.builtin.include_tasks: caddy_sidecar.yml
+  loop: "{{ compose_up_services_normalized | default([], true) }}"
+  loop_control:
+    loop_var: caddy_item
+    label: "{{ caddy_item.name }}"
+  when: not caddy_item.public and caddy_item.headscale_node and caddy_item.tls
+
+- name: Copy docker compose files (services without a Headscale node)
   ansible.builtin.template:
     src: templates/{{ item.file }}/{{ item.file }}.yml.j2
     dest: /home/ansible/{{ item.file }}/docker-compose.yml
     owner: root
     group: root
     mode: '664'
-  loop: "{{ compose | default([], true) }}"
-  vars:
-    tailscale_authkey: "{{ lookup('community.general.bitwarden', 'tailscale_auth_key', field='notes')[0] }}"
+  loop: "{{ compose_up_services_normalized | default([], true) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: not item.headscale_node
 
-- name: Copy Tailscale Sidecar Compose Files
-  ansible.builtin.template:
-    src: templates/ts-service/ts-service.yml.j2
-    dest: /home/ansible/{{ item.file }}/ts-service.yml
-    owner: root
-    group: root
-    mode: '664'
-  loop: "{{ compose | default([], true) }}"
-  vars:
-    tailscale_authkey: "{{ lookup('community.general.bitwarden', 'tailscale_auth_key', field='notes')[0] }}"
-
-- name: Copy tailscale config files
-  ansible.builtin.template:
-    src: templates/{{ item.file if "custom" in item and item.custom else "ts-service" }}/ts.json.j2
-    dest: /home/ansible/{{ item.file }}/ts/config/ts.json
-    owner: root
-    group: root
-    mode: '664'
-  loop: "{{ compose | default([], true) }}"
+# Mints a per-node, per-service-tags Headscale pre-auth key (see
+# headscale_preauthkey.yml) and renders both compose files for the item.
+- name: Render compose files for Headscale-backed services
+  ansible.builtin.include_tasks: headscale_preauthkey.yml
+  loop: "{{ compose_up_services_normalized | default([], true) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.headscale_node
 
 - name: Deploy dockers
   community.docker.docker_compose_v2:
     project_src: /home/ansible/{{ item.file }}/
     files:
       - "docker-compose.yml"
-  loop: "{{ compose | default([], true) }}"
+  loop: "{{ compose_up_services_normalized | default([], true) }}"
+  loop_control:
+    label: "{{ item.name }}"

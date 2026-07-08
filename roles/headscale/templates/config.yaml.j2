@@ -1,0 +1,51 @@
+server_url: {{ headscale_server_url }}
+listen_addr: {{ headscale_listen_addr }}
+
+trusted_proxies:
+  - 127.0.0.1/32
+  - ::1/128
+
+# TLS is terminated by Caddy
+tls_cert_path: ""
+tls_key_path: ""
+
+noise:
+  private_key_path: {{ headscale_noise_private_key_path }}
+
+prefixes:
+  v4: 100.64.0.0/10
+  v6: fd7a:115c:a1e0::/48
+  allocation: sequential
+
+database:
+  type: sqlite
+  sqlite:
+    path: {{ headscale_db_path }}
+    write_ahead_log: true
+
+derp:
+  server:
+    enabled: false
+  urls:
+    - https://controlplane.tailscale.com/derpmap/default
+  auto_update_enabled: true
+  update_frequency: 3h
+
+dns:
+  magic_dns: true
+  base_domain: {{ headscale_base_domain }}
+  nameservers:
+    global:
+      - 1.1.1.1
+      - 8.8.8.8
+
+policy:
+  mode: file
+  path: {{ headscale_acl_policy_path }}
+
+unix_socket: /var/run/headscale/headscale.sock
+unix_socket_permission: "0770"
+
+log:
+  level: info
+  format: text

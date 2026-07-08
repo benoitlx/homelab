@@ -11,4 +11,5 @@
       - htop
       - iftop
       - kitty-terminfo
+      - git
     state: present

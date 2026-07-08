@@ -5,19 +5,11 @@
 Personnal repository for easy deployment of services running on my homelab.
 This playbook specifically target [raspberry pi][rpi] and machines on [fedora][fedora], but it should works fine for any [debian][debian] based machine.
 
-## What's currently running
+My homelab heavily rely on [tailscale] with a self-hosted control server (see [headscale]) on a VPS to connect every devices to each other.
 
-- A Fedora 41 server running :
-    - [Jellyfin][jellyfin]
-    - [Jellyseer][jellyseer]
-    - The [Arr][arr] suite
-    - [QbitTorrent][qbittorrent]
-    - [faster-whisper][faster-whisper]
-    - [piper][piper]
-    - [ollama][ollama] with a [Web UI][open-webui]
-- A raspberry pi 5 running :
-    - [Home Assistant][homeassistant]
-    - [Wizarr][wizarr]
+## Architecture overview
+
+![](/docs/assets/architecture.svg)
 
 ## Deployment
 
@@ -42,27 +34,33 @@ To develop on your computer :
 
 Create a [`hosts`][inventory] file with the target hostnames.
 
-Create a directory `host_vars` (like the directory [`host_var_examples`](host_var_examples/)) for host specific variables.
+Create a directory `host_vars` (like the directory [`host_vars_example`](host_vars_example/)) for host specific variables.
 For each host create a yaml file in `host_vars` indicating which service to run on the host.
 
 Here is an example of what should be inside these files for running the [homeassistant](/roles/compose_up/templates/homeassistant/homeassistant.yml.j2) service using the specified compose file.
 
 ```yaml
-# yaml-language-server: $schema=../host_var_examples/schema.json
+# yaml-language-server: $schema=../host_vars_example/schema.json
 
-compose:
-  - file: homeassistant
-    name: home
-    serve:
-      - 8123
+services:
+  - name: home
+    file: homeassistant
+    public: true
+    port: 8123
 ```
 
-A full example is available [here](/host_var_examples/example.com.yml), as well as a [json-schema](/host_var_examples/schema.json).
+A full example is available [here](/host_vars_example/example.com.yml), as well as a [json-schema](/host_vars_example/schema.json).
 
 > [!WARNING]
-> Even if you don't want to deploy services on a device you should create this file with `compose:`
+> Even if you don't want to deploy services on a device you should create this file with `services:`
 
-Then run `just playbook-deploy-infra` and your services should be deployed on your machines.
+The control-server (Headscale, Caddy, fail2ban) and the rest of the machines are deployed by two separate playbooks:
+
+- `just playbook-deploy-control-server` provisions the control-server
+- `just playbook-deploy-services` provisions every other machine, compose services included
+
+> [!NOTE]
+> Deploying for the very first time ? All secrets live in a self-hosted Vaultwarden vault, which is itself one of the services deployed by these playbooks, so there's a specific order to follow, see [docs/bootstrap.md](docs/bootstrap.md).
 
 ## TODO
 
@@ -104,3 +102,5 @@ Then run `just playbook-deploy-infra` and your services should be deployed on yo
 [open-webui]: https://github.com/open-webui/open-webui
 [piper]: https://github.com/rhasspy/piper
 [borg]: https://www.borgbackup.org/
+[tailscale]: https://tailscale.com/
+[headscale]: https://headscale.net/stable/

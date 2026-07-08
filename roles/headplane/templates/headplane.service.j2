@@ -1,0 +1,15 @@
+[Unit]
+Description=Headplane
+After=network.target headscale.service
+Requires=network.target
+
+[Service]
+Type=simple
+User=headplane
+WorkingDirectory={{ headplane_install_dir }}
+ExecStart=/usr/bin/node {{ headplane_install_dir }}/build/server/index.js
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

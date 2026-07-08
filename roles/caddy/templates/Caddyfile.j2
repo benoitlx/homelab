@@ -1,0 +1,31 @@
+{
+    acme_dns ovh {
+        endpoint {{ caddy_ovh_endpoint }}
+        application_key {{ caddy_ovh_application_key }}
+        application_secret {{ caddy_ovh_application_secret }}
+        consumer_key {{ caddy_ovh_consumer_key }}
+    }
+}
+
+import sites/*.Caddyfile
+
+http://{{ caddy_headscale_domain }} {
+    handle /generate_204 {
+        respond 204
+    }
+
+    handle * {
+        redir https://{host}{uri}
+    }
+}
+
+{{ caddy_headscale_domain }} {
+    reverse_proxy localhost:{{ caddy_headscale_backend_port }} {
+        header_up True-Client-IP {remote_host}
+        header_up X-Real-IP {remote_host}
+    }
+}
+
+{{ caddy_headplane_domain }} {
+    reverse_proxy localhost:{{ caddy_headplane_backend_port }}
+}

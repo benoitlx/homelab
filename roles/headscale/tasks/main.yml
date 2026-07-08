@@ -1,0 +1,35 @@
+---
+- name: Download headscale deb package
+  ansible.builtin.get_url:
+    url: "https://github.com/juanfont/headscale/releases/download/v{{ headscale_version }}/headscale_{{ headscale_version }}_linux_{{ headscale_arch }}.deb"
+    dest: "/tmp/headscale_{{ headscale_version }}_linux_{{ headscale_arch }}.deb"
+    mode: '644'
+
+- name: Install headscale
+  ansible.builtin.apt:
+    deb: "/tmp/headscale_{{ headscale_version }}_linux_{{ headscale_arch }}.deb"
+    state: present
+
+- name: Copy headscale ACL policy
+  ansible.builtin.template:
+    src: templates/acl-policy.hujson.j2
+    dest: "{{ headscale_acl_policy_path }}"
+    owner: headscale
+    group: headscale
+    mode: '640'
+  notify: Restart headscale
+
+- name: Copy headscale config
+  ansible.builtin.template:
+    src: templates/config.yaml.j2
+    dest: /etc/headscale/config.yaml
+    owner: headscale
+    group: headscale
+    mode: '640'
+  notify: Restart headscale
+
+- name: Enable and start headscale
+  ansible.builtin.service:
+    name: headscale
+    enabled: true
+    state: started

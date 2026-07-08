@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=schema.json
+
+services:
+  - name: home-server
+    file: homeassistant
+    public: true
+    port: 8123
+    tags:
+      - public
+  - name: stt
+    file: whisper
+    public: false
+    tags:
+      - private
+  - name: llm
+    file: ollama
+    public: true
+    port: 48080
+    tags:
+      - public
+  - name: mqtt
+    file: mosquitto
+    headscale_node: false
+  - name: aaaa
+    file: test1
+    public: false
+    tags:
+      - private

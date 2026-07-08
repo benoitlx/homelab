@@ -1,0 +1,30 @@
+{
+  // Tags minted onto pre-auth keys at deploy time (see
+  // playbooks/tasks/mint_tailscale_authkey.yml and
+  // roles/compose_up/tasks/headscale_preauthkey.yml), fixed at key-creation
+  // time under Headscale's tags-as-identity model (not self-advertised via
+  // --advertise-tags). Grants the "ansible-managed" user the right to mint
+  // keys carrying these tags. Headscale requires a trailing "@" to
+  // disambiguate a plain username from a group/tag alias (see
+  // hscontrol/policy/v2 parseOwner/isUser).
+  "tagOwners": {
+    "tag:public": ["ansible-managed@"],
+    "tag:semi-private": ["ansible-managed@"],
+    "tag:private": ["ansible-managed@"],
+    "tag:pi4": ["ansible-managed@"],
+    "tag:pi5rez": ["ansible-managed@"],
+    "tag:fedora-fixe": ["ansible-managed@"],
+    "tag:sat": ["ansible-managed@"],
+    "tag:vps": ["ansible-managed@"]
+  },
+
+  // Accept-all for now — no per-tag segmentation yet, this just unblocks
+  // tag registration without changing current connectivity.
+  "acls": [
+    {
+      "action": "accept",
+      "src": ["*"],
+      "dst": ["*:*"]
+    }
+  ]
+}

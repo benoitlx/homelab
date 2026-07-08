@@ -1,0 +1,103 @@
+---
+- name: Add Caddy GPG key
+  ansible.builtin.get_url:
+    url: https://dl.cloudsmith.io/public/caddy/stable/gpg.key
+    dest: /etc/apt/keyrings/caddy.asc
+    mode: '0644'
+    owner: root
+
+- name: Add Caddy repository
+  ansible.builtin.apt_repository:
+    repo: deb [signed-by=/etc/apt/keyrings/caddy.asc] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main
+    state: present
+
+- name: Install Caddy
+  ansible.builtin.apt:
+    name: caddy
+    state: present
+    update_cache: true
+
+- name: Install Go (build dependency for xcaddy)
+  ansible.builtin.unarchive:
+    src: "https://go.dev/dl/go{{ caddy_go_version }}.linux-{{ caddy_go_arch }}.tar.gz"
+    dest: /usr/local
+    remote_src: true
+    creates: /usr/local/go/bin/go
+
+- name: Symlink Go into a directory already on sudo's secure_path
+  ansible.builtin.file:
+    src: /usr/local/go/bin/go
+    dest: /usr/local/bin/go
+    state: link
+
+- name: Add xcaddy GPG key
+  ansible.builtin.get_url:
+    url: https://dl.cloudsmith.io/public/caddy/xcaddy/gpg.key
+    dest: /etc/apt/keyrings/caddy-xcaddy.asc
+    mode: '0644'
+    owner: root
+
+- name: Add xcaddy repository
+  ansible.builtin.apt_repository:
+    repo: deb [signed-by=/etc/apt/keyrings/caddy-xcaddy.asc] https://dl.cloudsmith.io/public/caddy/xcaddy/deb/debian any-version main
+    state: present
+
+- name: Install xcaddy
+  ansible.builtin.apt:
+    name: xcaddy
+    state: present
+    update_cache: true
+
+- name: Check installed Caddy modules
+  ansible.builtin.command: caddy list-modules
+  register: caddy_modules
+  changed_when: false
+
+- name: Build Caddy with the OVH DNS plugin
+  ansible.builtin.command:
+    cmd: xcaddy build --with github.com/caddy-dns/ovh --output /usr/local/bin/caddy.xcaddy
+  environment:
+    PATH: "/usr/local/go/bin:{{ ansible_env.PATH }}"
+    HOME: /root
+  when: "'dns.providers.ovh' not in caddy_modules.stdout"
+  changed_when: true
+
+- name: Install the custom Caddy build
+  ansible.builtin.copy:
+    src: /usr/local/bin/caddy.xcaddy
+    dest: /usr/bin/caddy
+    remote_src: true
+    owner: root
+    group: root
+    mode: '755'
+  when: "'dns.providers.ovh' not in caddy_modules.stdout"
+  notify: Restart caddy
+
+- name: Ensure Caddy sites directory exists
+  ansible.builtin.file:
+    path: /etc/caddy/sites
+    state: directory
+    owner: root
+    group: root
+    mode: '755'
+
+- name: Render per-service Caddyfiles
+  ansible.builtin.include_tasks: render_site.yml
+  loop: "{{ groups['all'] | difference(groups['control_server']) }}"
+  loop_control:
+    loop_var: target_host
+
+- name: Copy Caddyfile
+  ansible.builtin.template:
+    src: templates/Caddyfile.j2
+    dest: /etc/caddy/Caddyfile
+    owner: root
+    group: root
+    mode: '644'
+  notify: Reload caddy
+
+- name: Enable and start caddy
+  ansible.builtin.service:
+    name: caddy
+    enabled: true
+    state: started

@@ -1,0 +1,3 @@
+{{ item.name }}.{{ public_base_domain }} {
+    reverse_proxy {{ item.name }}.{{ headscale_base_domain }}:{{ item.port }}
+}

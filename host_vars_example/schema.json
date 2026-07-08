@@ -1,0 +1,77 @@
+{
+    "description": "Schema for validating host_vars",
+    "type": "object",
+    "properties": {
+        "services": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "The Tailscale/MagicDNS hostname of the service. Required and must be unique."
+                    },
+                    "file": {
+                        "type": "string",
+                        "description": "The template folder under roles/compose_up/templates/ to render. Defaults to `name` when omitted."
+                    },
+                    "public": {
+                        "type": "boolean",
+                        "description": "Whether the service is exposed publicly through the VPS Caddy. Defaults to false.",
+                        "default": false
+                    },
+                    "port": {
+                        "type": "integer",
+                        "description": "Backend port the VPS Caddy reverse-proxies to. Required when public is true; ignored otherwise (private services hardcode their port in their own Caddyfile.j2).",
+                        "minimum": 1,
+                        "maximum": 65535
+                    },
+                    "headscale_node": {
+                        "type": "boolean",
+                        "description": "Whether the service gets its own Tailscale sidecar / tailnet identity. Defaults to true. Set to false for services that should just publish ports directly (e.g. mqtt).",
+                        "default": true
+                    },
+                    "tls": {
+                        "type": "boolean",
+                        "description": "Whether to deploy a local Caddy sidecar for TLS termination. Only relevant when public is false and headscale_node is true. Defaults to true; set to false for private services that don't need TLS (e.g. raw/non-HTTP ports).",
+                        "default": true
+                    },
+                    "tags": {
+                        "type": "array",
+                        "description": "Headscale ACL tags advertised by the Tailscale sidecar (--advertise-tags). Only meaningful when headscale_node is true.",
+                        "items": {
+                            "type": "string"
+                        },
+                        "uniqueItems": true
+                    },
+                    "no_backup": {
+                        "type": "boolean",
+                        "description": "Excludes the service from the backup routine."
+                    }
+                },
+                "additionalProperties": false,
+                "required": [
+                    "name"
+                ],
+                "if": {
+                    "properties": {
+                        "public": {
+                            "const": true
+                        }
+                    },
+                    "required": [
+                        "public"
+                    ]
+                },
+                "then": {
+                    "required": [
+                        "port"
+                    ]
+                }
+            }
+        }
+    },
+    "required": [
+        "services"
+    ]
+}

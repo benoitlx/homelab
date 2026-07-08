@@ -1,0 +1,26 @@
+---
+- name: Load Caddy backend port for {{ caddy_item.name }}
+  ansible.builtin.set_fact:
+    compose_up_caddy_port: >-
+      {{ (lookup('ansible.builtin.file', role_path + '/templates/' + caddy_item.file + '/caddy_port.yml') | from_yaml).caddy_port }}
+
+- name: Render Caddyfile for {{ caddy_item.name }}
+  ansible.builtin.template:
+    src: templates/caddy-sidecar/Caddyfile.j2
+    dest: /home/ansible/{{ caddy_item.file }}/Caddyfile
+    owner: root
+    group: root
+    mode: '644'
+  vars:
+    item: "{{ caddy_item }}"
+    caddy_port: "{{ compose_up_caddy_port }}"
+
+- name: Render Caddy sidecar compose fragment for {{ caddy_item.name }}
+  ansible.builtin.template:
+    src: templates/caddy-sidecar/caddy-sidecar.yml.j2
+    dest: /home/ansible/{{ caddy_item.file }}/caddy-sidecar.yml
+    owner: root
+    group: root
+    mode: '664'
+  vars:
+    item: "{{ caddy_item }}"

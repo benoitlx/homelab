@@ -1,0 +1,56 @@
+---
+- name: Common
+  hosts: control_server
+  become: true
+  roles:
+    - common
+
+- name: Control Server - Headscale
+  hosts: control_server
+  become: true
+  roles:
+    - headscale
+
+- name: Control Server - Caddy
+  hosts: control_server
+  become: true
+  roles:
+    - caddy
+    - fail2ban
+
+- name: Control Server - Tailscale
+  hosts: control_server
+  become: true
+
+  pre_tasks:
+    - name: Check if Tailscale is up
+      ansible.builtin.shell: |
+        tailscale status
+      register: tailscale_check
+      ignore_errors: true
+      changed_when: false
+
+    - name: Set fact for Tailscale presence
+      ansible.builtin.set_fact:
+        tailscale_installed: "{{ tailscale_check.rc == 0 }}"
+
+    - name: Mint a Headscale pre-auth key for this host
+      ansible.builtin.include_tasks: tasks/mint_tailscale_authkey.yml
+      tags: [needs-secrets]
+      when: not tailscale_installed
+      vars:
+        headscale_preauthkey_api_key: "{{ lookup('community.general.bitwarden', 'headscale_api_key', field='notes')[0] }}"
+
+  roles:
+    - role: artis3n.tailscale.machine
+      tags: [needs-secrets]
+      vars:
+        tailscale_args: "--login-server=http://127.0.0.1:8080 --accept-dns --reset"
+      when: not tailscale_installed
+
+- name: Control Server - Headplane
+  hosts: control_server
+  become: true
+  roles:
+    - role: headplane
+      tags: [needs-secrets]

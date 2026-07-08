@@ -1,0 +1,10 @@
+---
+- name: Render public services Caddyfile for {{ target_host }}
+  ansible.builtin.template:
+    src: templates/site.Caddyfile.j2
+    dest: "/etc/caddy/sites/{{ item.name }}.Caddyfile"
+    owner: root
+    group: root
+    mode: '644'
+  loop: "{{ hostvars[target_host].services | default([]) | selectattr('public', 'defined') | selectattr('public', 'equalto', true) }}"
+  notify: Reload caddy

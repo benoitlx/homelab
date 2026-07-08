@@ -1,0 +1,29 @@
+---
+- name: Ensure shared Caddy data volume exists
+  community.docker.docker_volume:
+    name: caddy_volume
+    state: present
+
+- name: Ensure the Caddy+OVH-DNS build context exists
+  ansible.builtin.file:
+    path: /home/ansible/.caddy-ovh-build
+    state: directory
+    owner: root
+    group: root
+    mode: '755'
+
+- name: Copy the Caddy+OVH-DNS Dockerfile
+  ansible.builtin.copy:
+    src: templates/caddy-sidecar/Dockerfile
+    dest: /home/ansible/.caddy-ovh-build/Dockerfile
+    owner: root
+    group: root
+    mode: '644'
+
+- name: Build the Caddy+OVH-DNS image (builds once, cached by Docker afterwards)
+  community.docker.docker_image:
+    name: homelab/caddy-ovh
+    tag: latest
+    source: build
+    build:
+      path: /home/ansible/.caddy-ovh-build

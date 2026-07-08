@@ -1,0 +1,9 @@
+---
+headscale_server_url: "https://headscale.yourdomain.com"
+public_base_domain: "yourdomain.com"
+headscale_base_domain: "ts.yourdomain.com"
+
+caddy_ovh_endpoint: "ovh-eu"
+caddy_ovh_application_key: "your-ovh-application-key"
+caddy_ovh_application_secret: "your-ovh-application-secret"
+caddy_ovh_consumer_key: "your-ovh-consumer-key"

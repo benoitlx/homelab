@@ -5,11 +5,11 @@ services:
     # à voir: enlever le hostname
     environment:
       - TS_AUTHKEY={{ tailscale_authkey }}
+      - TS_EXTRA_ARGS=--login-server={{ headscale_server_url }} --reset
       - TS_STATE_DIR=/var/lib/tailscale
-      - TS_SERVE_CONFIG=/config/ts.json
+      - TS_AUTH_ONCE=true
     volumes:
       - /home/ansible/{{ item.file }}/ts/state:/var/lib/tailscale
-      - /home/ansible/{{ item.file }}/ts/config:/config
     devices:
       - /dev/net/tun:/dev/net/tun
     cap_add:

@@ -1,5 +1,8 @@
 include:
   - ts-service.yml
+{% if not item.public and (item.headscale_node | default(true)) and (item.tls | default(true)) %}
+  - caddy-sidecar.yml
+{% endif %}
 
 services:
   vaultwarden:
