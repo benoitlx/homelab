@@ -64,7 +64,7 @@ The control-server (Headscale, Caddy, fail2ban) and the rest of the machines are
 
 ## TODO
 
-- [ ] solve the issue I opened on ansible-role-tailscale (https://github.com/artis3n/ansible-role-tailscale/issues/517)
+- [x] solve the issue I opened on ansible-role-tailscale (https://github.com/artis3n/ansible-role-tailscale/issues/517)
 - [ ] role for installing seeed-voicecard driver
     - forked driver (working on pi4 with bookworm) : https://github.com/Wartem/seeed-voicecard
     - The forked driver remove the headphone drive. To reanable it search for snc_bcmxxxx in `/etc/modprobe.d/`
